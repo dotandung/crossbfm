@@ -2224,6 +2224,25 @@ body.dark-mode .mae-sw-joint { background: #77acee; }
   background: #000;
 }
 
+/* Fit the whole 16:9 video, nav bar and caption into one window: the width
+   follows the window height (a laptop screen is ~800px tall, so the full
+   1280px column would play 720px tall and overflow it). 220px covers the nav,
+   the caption and some margin. The real-robot clips are secondary to the
+   summary, so they also stop at 820px, the width the other figures use. */
+.summary-fig,
+.real-fig {
+  width: 100%;
+  max-width: min(100%, calc((100vh - 220px) * 16 / 9));
+  max-width: min(100%, calc((100svh - 220px) * 16 / 9));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.real-fig {
+  max-width: min(100%, 820px, calc((100vh - 220px) * 16 / 9));
+  max-width: min(100%, 820px, calc((100svh - 220px) * 16 / 9));
+}
+
 /* ===== Rollout demos =====
    Three embodiments side by side on one shared timeline. They are not toggled:
    the clips of a motion are cut to the same frames under one crop, so the
