@@ -1,0 +1,4943 @@
+/* ===== CSS Reset & Custom Properties ===== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-bg: #ffffff;
+  --color-bg-alt: #fbfff7;
+  --color-text: #1d1d1f;
+  --color-text-secondary: #86868b;
+  --color-accent: #21a010;
+  --color-accent-hover: #329415;
+  --color-highlight-bg: rgba(255, 214, 10, 0.15);
+  --color-border: #d2d2d7;
+  --color-border-light: #f0f0f0;
+  --color-card-bg: #ffffff;
+  /* The two latent spaces, wherever a figure draws both: the frozen G1 source is
+     pink, our distilled latent is green. Validated as a categorical pair on the
+     card surface -- all-pairs CVD dE 13.5 (protan), normal-vision 33.2, both
+     above 3:1. The luminance gap is what carries the pair through red-green CVD,
+     so keep the green dark in light mode and the pink light in dark mode. */
+  --acc-src: #fa2f2f;
+  --acc-tgt: #3cd30e;
+  --font-primary: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Lato', 'Helvetica Neue', sans-serif;
+  --max-width: 1280px;
+  --section-padding: clamp(40px, 4.5vh, 60px) clamp(20px, 5vw, 40px);
+  --transition-reveal: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.3s ease;
+}
+
+/* ===== Dark Mode ===== */
+body.dark-mode {
+  --color-bg: #000000;
+  --color-bg-alt: #1c1c1e;
+  --color-text: #f5f5f7;
+  --color-text-secondary: #a1a1a6;
+  --color-accent: #64fa3f;
+  --color-accent-hover: #71f34a;
+  --color-highlight-bg: rgba(255, 214, 10, 0.12);
+  --color-border: #38383a;
+  --color-border-light: #2c2c2e;
+  --color-card-bg: #252525;
+  /* Re-stepped for the dark card, not flipped: all-pairs CVD dE 10.2 (deutan),
+     normal-vision 36.2, both above 3:1 on #252525. */
+  --acc-src: #e05c9c;
+  --acc-tgt: #0fb345;
+}
+
+body.dark-mode .nav-top {
+  background: rgba(0, 0, 0, 0.72);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .pub-links a {
+  background: var(--color-bg-alt);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+body.dark-mode .pub-links a:hover {
+  background: var(--color-accent);
+  color: #000;
+  border-color: var(--color-accent);
+}
+
+body.dark-mode .bibtex-block {
+  background: var(--color-bg-alt);
+}
+
+/* ===== Font Faces (Lato) ===== */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lato Regular'), local('Lato-Regular'), url(https://fonts.gstatic.com/s/lato/v15/S6uyw4BMUTPHjx4wXiWtFCc.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Lato Bold'), local('Lato-Bold'), url(https://fonts.gstatic.com/s/lato/v15/S6u9w4BMUTPHh6UVSwiPGQ3q5d0.woff2) format('woff2');
+}
+
+/* ===== Base ===== */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--color-text);
+  background: var(--color-bg);
+  overflow-x: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+/* ===== Theme Toggle ===== */
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text);
+  opacity: 0.6;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: opacity var(--transition-fast), background var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  opacity: 1;
+  background: rgba(128, 128, 128, 0.1);
+}
+
+.icon-sun { display: none; }
+.icon-moon { display: block; }
+body.dark-mode .icon-sun { display: block; }
+body.dark-mode .icon-moon { display: none; }
+
+/* ===== Top Navigation ===== */
+.nav-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.nav-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 14px 20px;
+}
+
+.nav-link {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--color-text);
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+  text-decoration: none;
+}
+
+.nav-home {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
+
+.nav-top.scrolled .nav-home {
+  opacity: 0.7;
+  pointer-events: auto;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  opacity: 1;
+  color: var(--color-text);
+}
+
+.nav-top:not(.scrolled) .nav-home {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ===== Reveal Animations ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity var(--transition-reveal), transform var(--transition-reveal);
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== Hero Section ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  padding: 48px clamp(20px, 5vw, 40px) 12px;   /* horizontal matches .content-section */
+  background: var(--color-bg);
+  text-align: center;
+  position: relative;
+}
+
+/* Native, responsive. margin:auto centers it when it fits; on short windows
+   the auto margins collapse so content flows from the top and scrolls. */
+.hero-inner {
+  max-width: var(--max-width);   /* same as .section-inner (abstract) */
+  width: 100%;
+  margin: auto;
+  animation: heroFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Title — base ===== */
+.hero-title {
+  font-size: clamp(1.3rem, 3vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  padding: 46px 0;
+  margin-bottom: 14px;
+  color: var(--color-text);
+  white-space: nowrap;
+  position: relative;
+  display: inline-block;
+}
+
+/* ===== Hero Authors & Affiliation ===== */
+.hero-authors {
+  font-size: clamp(15px, 1.55vw, 21px);
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+.hero-authors a {
+  white-space: nowrap;   /* wrap between names, never inside one */
+  color: var(--color-text);
+  transition: color var(--transition-fast);
+}
+
+.hero-authors a:hover {
+  color: var(--color-accent);
+}
+
+.hero-author-line {
+  display: block;   /* one row per line; each row still wraps between names on a phone */
+}
+
+.hero-authors sup {
+  font-size: 0.65em;
+  margin-left: 1px;
+}
+
+.hero-author-notes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 18px;
+  font-size: clamp(13px, 1.2vw, 16px);
+  color: var(--color-text-secondary);
+  margin: -4px 0 12px;
+}
+
+.hero-author-notes sup {
+  margin-right: 2px;
+}
+
+.hero-authors strong {
+  color: var(--color-text);
+}
+
+.hero-affiliation {
+  font-size: clamp(14px, 1.3vw, 18px);
+  color: var(--color-text-secondary);
+  margin-bottom: 14px;
+}
+
+.hero-affiliation a {
+  color: var(--color-text-secondary);
+}
+
+.hero-affiliation a:hover {
+  color: var(--color-accent);
+}
+
+.hero-venue {
+  font-size: clamp(15px, 1.35vw, 19px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+.hero-venue a {
+  color: #c5960c;
+  transition: color var(--transition-fast);
+}
+
+.hero-venue a:hover {
+  color: #e0ab1a;
+}
+
+
+/* ===== Publication Link Buttons ===== */
+.pub-links {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pub-links a {
+  font-size: clamp(12px, 1.2vw, 16px);
+  font-weight: 500;
+  color: var(--color-accent);
+  padding: 7px 16px;
+  border-radius: 980px;
+  border: 1px solid var(--color-accent);
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pub-links a:hover {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.pub-links a svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ===== Content Sections ===== */
+.content-section {
+  padding: var(--section-padding);
+  background: var(--color-bg);
+  position: relative;
+}
+
+.content-section:nth-child(even) {
+  background: var(--color-bg-alt);
+}
+
+.section-inner {
+  max-width: var(--max-width);
+  width: 100%;
+  margin: 0 auto;
+}
+
+.section-heading {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  color: var(--color-text);
+  margin-bottom: 36px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.section-body {
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--color-text);
+}
+
+.section-body p {
+  margin-bottom: 18px;
+}
+
+@media (max-width: 768px) {
+  .section-body {
+    font-size: 16.5px;
+  }
+
+  .section-body p {
+    margin-bottom: 16px;
+  }
+}
+
+.placeholder-block {
+  background: var(--color-card-bg);
+  border-radius: 16px;
+  padding: 60px 40px;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  margin-top: 24px;
+  border: 1px dashed var(--color-border);
+}
+
+/* ===== BibTeX ===== */
+.bibtex-block {
+  background: var(--color-bg-alt);
+  border-radius: 12px;
+  padding: 24px 28px;
+  overflow-x: auto;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text);
+  margin-top: 16px;
+}
+
+/* ===== Authors (photo row) ===== */
+.author-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 36px 40px;
+}
+
+/* Two centred rows (4 + 5) on wide screens; on a phone the rows dissolve into
+   the one 3-column grid below. */
+.author-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 36px 40px;
+  width: 100%;
+}
+
+.author-card {
+  width: 168px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.author-card img {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.author-card:hover img,
+.author-card:focus-visible img {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+.author-name {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.35;
+  transition: color var(--transition-fast);
+}
+
+.author-card:hover .author-name {
+  color: var(--color-accent);
+}
+
+.author-name sup,
+.author-affiliations sup {
+  font-size: 0.7em;
+  color: var(--color-text-secondary);
+  margin-left: 1px;
+}
+
+.author-affiliations {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 26px;
+  margin-top: 40px;
+  font-size: 17px;
+  color: var(--color-text-secondary);
+}
+
+.author-affiliations sup {
+  margin: 0 2px 0 0;
+}
+
+.author-notes {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+body.dark-mode .author-card img {
+  border-color: var(--color-border);
+  background: var(--color-bg-alt);
+}
+
+body.dark-mode .author-card:hover img {
+  border-color: var(--color-accent);
+}
+
+/* Tighter spacing keeps 4 + 5 intact down to a small laptop; below that the
+   rows dissolve into a 3 x 3 grid so no name is left alone on a line. */
+@media (max-width: 1040px) {
+  .author-row,
+  .author-grid {
+    gap: 32px 14px;
+  }
+
+  .author-card {
+    width: 156px;
+  }
+
+  .author-card img {
+    width: 116px;
+    height: 116px;
+  }
+}
+
+@media (max-width: 960px) {
+  .author-row {
+    display: contents;
+  }
+
+  .author-grid {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .author-card {
+    width: calc((100% - 28px) / 3);   /* exactly 3 across: 2 gaps of 14px */
+  }
+}
+
+@media (max-width: 430px) {
+  .author-grid {
+    gap: 22px 8px;
+  }
+
+  .author-card {
+    width: calc((100% - 16px) / 3);
+  }
+
+  .author-card img {
+    width: 92px;
+    height: 92px;
+  }
+
+  .author-name {
+    font-size: 15px;
+  }
+
+  .author-affiliations {
+    font-size: 14px;
+  }
+
+  .author-affiliations {
+    gap: 4px 14px;
+  }
+}
+
+/* ===== Interactive Demo Panel ===== */
+.demo-panel {
+  margin-bottom: 6px;
+}
+
+.demo-title {
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: center;
+  margin: 0 0 16px;
+  letter-spacing: 0.01em;
+}
+
+.demo-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.demo-col {
+  text-align: center;
+}
+
+.demo-img-wrapper {
+  position: relative;
+  cursor: crosshair;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--color-card-bg);
+  line-height: 0;
+}
+
+.demo-img-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.demo-roi {
+  position: absolute;
+  border: 2px solid #ff3b30;
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 2;
+  /* Size set by JS: 25% x 25% of the image */
+  width: 25%;
+  height: 25%;
+  top: 0;
+  left: 0;
+}
+
+.demo-roi-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+.demo-img-wrapper:hover .demo-roi-hint {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.demo-col canvas {
+  width: 100%;
+  border-radius: 8px;
+  background: var(--color-card-bg);
+  display: block;
+}
+
+#demo-naive-canvas {
+  border: 2px dashed #ff3b30;
+}
+
+#demo-foveated-canvas {
+  border: 2px solid #ff3b30;
+}
+
+.demo-label {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.demo-caption {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+  margin-top: 16px;
+  text-align: justify;
+}
+
+/* ===== Hero Tagline (typewriter) ===== */
+.hero-tagline-wrapper {
+  text-align: center;
+}
+
+.tagline-section {
+  padding: 56px 20px;
+  background: var(--color-bg);
+  text-align: center;
+}
+
+.hero-tagline-line {
+  font-size: clamp(12px, 1.1vw, 15px);
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+  min-height: 1.8em;
+  margin: 0;
+  display: block;
+}
+
+/* ===== Footer ===== */
+.site-footer {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  border-top: 1px solid var(--color-border);
+}
+
+.site-footer a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.site-footer a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* ===== Bandwidth Comparison Demo ===== */
+.bandwidth-demo {
+  margin: 32px 0;
+}
+
+.bandwidth-tabs {
+  margin-bottom: 16px;
+}
+
+.bw-overlay-label {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+  z-index: 3;
+}
+
+.bw-slider-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.bw-slider-spacer {
+  /* Empty spacer matching the left panel width */
+}
+
+.bw-slider-wrap {
+  text-align: center;
+}
+
+.bw-slider-label {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  display: block;
+  margin-top: 4px;
+}
+
+.bw-slider {
+  width: 100%;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+  outline: none;
+}
+
+.bw-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+}
+
+.bw-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  border: none;
+}
+
+.bw-slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+  padding: 0 2px;
+}
+
+/* ===== Video Carousel & 3-Panel Grid ===== */
+.video-3panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.panel {
+  text-align: center;
+}
+
+.panel-loading-wrap {
+  position: relative;
+  aspect-ratio: 1020 / 574;
+  background: var(--color-card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.panel-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-card-bg);
+  z-index: 2;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.frame-loader {
+  border-radius: 8px;
+}
+
+.video-category-label {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+  z-index: 3;
+  letter-spacing: 0.02em;
+}
+
+.video-caption {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  text-align: justify;
+  margin-top: 6px;
+  min-height: 2.4em;
+}
+
+.panel video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+  background: var(--color-card-bg);
+}
+
+.panel-roi video {
+  border: 2px solid #ff3b30;
+}
+
+.frame-slideshow {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2040 / 1148;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-card-bg);
+}
+
+.slideshow-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.2s ease;
+}
+
+/* Frame slideshow controls */
+.frame-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.frame-arrow {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  opacity: 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--transition-fast);
+}
+
+.frame-arrow:hover {
+  opacity: 1;
+}
+
+.frame-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.frame-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-border);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.frame-dot.active {
+  background: var(--color-accent);
+  transform: scale(1.3);
+}
+
+.panel-frames {
+  aspect-ratio: 2040 / 1148;
+}
+
+/* ===== Carousel Controls ===== */
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.carousel-arrow {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--transition-fast), background var(--transition-fast);
+}
+
+.carousel-arrow:hover {
+  opacity: 1;
+  background: rgba(128, 128, 128, 0.1);
+}
+
+.carousel-arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.carousel-dot.active {
+  background: var(--color-accent);
+  transform: scale(1.2);
+}
+
+/* ===== Video Carousel Wrapper ===== */
+.video-carousel {
+  margin-top: 24px;
+}
+
+.hero-carousel {
+  margin-top: 16px;
+  margin-bottom: 4px;
+}
+
+/* ===== Sensor-resolution plot (inside the first teaser panel) ===== */
+.isocell-plot-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.plot-axis {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+
+.plot-tick line {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+
+.plot-tick text {
+  font-size: 10px;
+  fill: var(--color-text-secondary);
+}
+
+.plot-axis-label {
+  font-size: 11px;
+  fill: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.plot-line-solid {
+  stroke: #c5960c;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: drawSolidLine 1.7s ease-out forwards;
+}
+
+@keyframes drawSolidLine {
+  to { stroke-dashoffset: 0; }
+}
+
+.plot-line-dashed {
+  stroke: #c5960c;
+  opacity: 0;
+  animation: fadeInLine 0.5s ease-out 1.7s forwards;
+}
+
+@keyframes fadeInLine {
+  to { opacity: 1; }
+}
+
+.plot-point {
+  opacity: 0;
+  animation: fadeInPoint 0.4s ease-out var(--d, 0s) forwards;
+}
+
+.plot-point circle {
+  fill: #c5960c;
+}
+
+.plot-point text {
+  font-size: 8px;
+  font-weight: 600;
+  fill: var(--color-text);
+}
+
+.plot-point-prototype circle {
+  fill: #c5960c;
+  stroke: var(--color-text);
+  stroke-width: 0.8;
+}
+
+.plot-point-prototype text { font-size: 9px; }
+
+.plot-callout {
+  stroke: #c5960c;
+  opacity: 0;
+  animation: fadeInLine 0.5s ease-out 1.85s forwards;
+}
+
+@keyframes fadeInPoint {
+  to { opacity: 1; }
+}
+
+.hero-teaser-wrap {
+  margin-top: 40px;
+  margin-bottom: 0;
+}
+
+/* The teaser runs straight into the abstract: the section's own top padding is
+   for a boundary between two bands of text, and this one is a figure and its
+   caption reading into the paragraph under them. */
+#abstract {
+  padding-top: 28px;
+}
+
+.hero-teaser {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.teaser-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex-grow: var(--panel-aspect);
+  flex-shrink: 1;
+  flex-basis: 0;
+}
+
+.teaser-isocell { --panel-aspect: 2.069; }   /* matches plot SVG viewBox 300/145 */
+.teaser-global  { --panel-aspect: 1.778; }   /* 16 / 9 — matches foveated crop panel */
+.teaser-crop    { --panel-aspect: 1.778; }   /* 16  / 9    */
+
+/* Titles row sits ABOVE the teaser, mirroring the panel flex-grow weights so
+   each subtitle lines up over its panel and the plot panel itself stays
+   vertically aligned with the global + foveated panels (no title offset). */
+/* Equation-style titles: phrases sized to content, operators centered exactly
+   between consecutive phrases (equal gap on both sides). Sequential reveal. */
+.hero-teaser-titles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.tt-cell {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  text-align: center;
+  color: #c5960c;
+  font-weight: 600;
+  font-size: clamp(15px, 1.35vw, 19px);   /* matches SIGGRAPH 2026 (.hero-venue) */
+  line-height: 1.3;
+}
+
+.tt-op {
+  flex: 0 0 auto;
+  color: var(--color-text);
+  font-weight: 700;
+  font-size: 32px;
+}
+
+/* Sequential reveal: phrase1 → + → phrase2 → = → phrase3 */
+.hero-teaser-titles > * {
+  opacity: 0;
+  animation: ttFadeIn 0.5s ease-out forwards;
+}
+.hero-teaser-titles > *:nth-child(1) { animation-delay: 0.2s; }
+.hero-teaser-titles > *:nth-child(2) { animation-delay: 0.75s; }
+.hero-teaser-titles > *:nth-child(3) { animation-delay: 1.3s; }
+.hero-teaser-titles > *:nth-child(4) { animation-delay: 1.85s; }
+.hero-teaser-titles > *:nth-child(5) { animation-delay: 2.4s; }
+
+@keyframes ttFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.teaser-img-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+body.dark-mode .teaser-img-wrap {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Sensor photo has transparent background — let it sit cleanly on any page bg. */
+.teaser-isocell .teaser-img-wrap {
+  background: transparent;
+}
+
+.teaser-isocell .teaser-img-wrap { aspect-ratio: 300 / 145; overflow: visible; }
+.teaser-global  .teaser-img-wrap { aspect-ratio: 16 / 9; }
+.teaser-crop    .teaser-img-wrap {
+  aspect-ratio: 16 / 9;
+  box-sizing: border-box;
+  border: 2px solid #e51a1a;
+  box-shadow: 0 0 12px rgba(229, 26, 26, 0.45);
+}
+
+.teaser-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.teaser-roi {
+  position: absolute;
+  border: 2px solid #e51a1a;
+  pointer-events: none;
+  box-shadow: 0 0 12px rgba(229, 26, 26, 0.45);
+  transition: left 0.6s ease, top 0.6s ease, width 0.6s ease, height 0.6s ease;
+}
+
+.teaser-label {
+  font-size: clamp(12px, 1.1vw, 16px);
+  color: var(--color-text);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.hero-teaser-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.hero-teaser-credit {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  opacity: 0.55;
+  text-align: center;
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+}
+
+.hero-teaser-blurb {
+  font-size: 16px;          /* matches .section-body (abstract text) */
+  line-height: 1.75;        /* matches .section-body */
+  color: var(--color-text);
+  text-align: left;
+  margin: 12px 0 0;
+}
+
+.teaser-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(128, 128, 128, 0.4);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.teaser-dot:hover {
+  background: rgba(128, 128, 128, 0.7);
+}
+
+.teaser-dot.active {
+  background: #c5960c;
+  transform: scale(1.2);
+}
+
+/* ===== Panel Labels ===== */
+.panel .demo-label {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+/* ===== Results Section Tabs ===== */
+.results-subtitle {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  margin-bottom: 24px;
+  color: var(--color-text);
+}
+
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition-fast), border-bottom-color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--color-text);
+}
+
+.tab-btn.active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+/* ===== Dark Mode — Carousel & Tabs ===== */
+body.dark-mode .carousel-arrow {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+body.dark-mode .carousel-arrow:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+
+body.dark-mode .frame-arrow {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+body.dark-mode .frame-arrow:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+
+body.dark-mode .tab-nav {
+  border-bottom-color: var(--color-border);
+}
+
+/* ===== Method Video ===== */
+.method-video {
+  width: 100%;
+  border-radius: 12px;
+  display: block;
+}
+
+.pub-links a.btn-disabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+  border-color: var(--color-text-secondary);
+  color: var(--color-text-secondary);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .nav-inner {
+    gap: 16px;
+    padding: 10px 16px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .nav-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-link {
+    font-size: 13px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Hero stays a full-viewport box; the JS scales the fixed design canvas
+     to fit, so no per-element mobile typography overrides are needed. */
+  .hero {
+    padding: 56px 12px;
+  }
+
+  .content-section {
+    padding: 34px 16px;
+  }
+
+  .section-heading {
+    font-size: 1.6rem;
+  }
+
+  .placeholder-block {
+    padding: 40px 20px;
+  }
+
+  .demo-images {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .demo-label {
+    font-size: 11px;
+  }
+
+  .video-3panel {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .tab-btn {
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+
+  .tab-nav {
+    gap: 0;
+  }
+}
+
+/* ===== Speed Template Layer ===== */
+.hero-title {
+  padding: 60px 0 26px;
+  margin-bottom: 2px;
+  white-space: normal;
+}
+
+.title-p1 {
+  display: block;
+}
+
+.title-p2-wrap {
+  display: block;
+  margin-top: 0.12em;
+}
+
+.title-p2 {
+  display: inline-block;
+}
+
+.section-body a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.section-body a:hover {
+  color: var(--color-accent);
+}
+
+#results-tabs {
+  border-bottom: none;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  overflow-x: visible;
+}
+
+#results-tabs .tab-btn {
+  border: 1px solid var(--color-text);
+  border-radius: 980px;
+  padding: 8px 18px;
+  color: var(--color-text);
+}
+
+#results-tabs .tab-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+#results-tabs .tab-btn.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+.spd-subhead {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--color-text);
+  margin: 44px 0 18px;
+}
+
+.spd-table-wrap {
+  margin-top: 32px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.spd-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.spd-table th,
+.spd-table td {
+  padding: 7px 14px;
+  text-align: center;
+}
+
+.spd-table tbody td:first-child,
+.spd-table thead tr:first-child th:first-child {
+  text-align: left;
+}
+
+.spd-table thead th {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.spd-table thead tr:first-child th {
+  border-top: 2px solid var(--color-text);
+  border-bottom: 1px solid var(--color-text);
+}
+
+.spd-table thead tr:last-child th {
+  border-bottom: 1px solid var(--color-text);
+}
+
+.spd-table tbody tr.tier td {
+  border-top: 1px solid var(--color-border);
+}
+
+.spd-table tbody tr:last-child td {
+  border-bottom: 2px solid var(--color-text);
+}
+
+.spd-table .ours td:first-child {
+  font-weight: 700;
+}
+
+/* Narrow screens: the tables are nowrap and wider than a phone, so the wrapper
+   scrolls sideways and the robot-name column pins to the left edge — the row
+   stays identifiable however far the numbers are scrolled.
+   `border-collapse: separate` is required: collapsed borders are painted by the
+   table, not the cell, so they would stay behind while the sticky column moves.
+   No border doubles up here because only the header and the last row carry rules. */
+@media (max-width: 768px) {
+  .content-section { --table-bg: var(--color-bg); }
+  .content-section:nth-child(even) { --table-bg: var(--color-bg-alt); }
+  /* Dark mode flattens every section to one tone -- match it. */
+  body.dark-mode .content-section,
+  body.dark-mode .content-section:nth-child(even) { --table-bg: #090d12; }
+
+  .spd-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 12px;
+  }
+
+  .spd-table th,
+  .spd-table td {
+    padding: 7px 10px;
+  }
+
+  .spd-table th:first-child,
+  .spd-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--table-bg, var(--color-bg));
+    /* 1px seam + a short fade, so the pinned column reads as sitting above the
+       numbers sliding under it. */
+    box-shadow: 1px 0 0 var(--color-border), 7px 0 7px -7px rgba(0, 0, 0, 0.28);
+  }
+
+  body.dark-mode .spd-table th:first-child,
+  body.dark-mode .spd-table td:first-child {
+    box-shadow: 1px 0 0 var(--color-border), 7px 0 7px -7px rgba(0, 0, 0, 0.75);
+  }
+}
+
+.tab-panel > details.spd-collapse:first-of-type > summary.spd-subhead {
+  margin-top: 4px;
+}
+
+.spd-subsubhead {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 28px 0 12px;
+}
+
+.spd-subsubhead a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.spd-subsubhead a:hover {
+  color: var(--color-accent);
+}
+
+details.spd-collapse {
+  margin: 0;
+}
+
+details.spd-collapse > summary {
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+details.spd-collapse > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.spd-collapse > summary::before {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 7px solid currentColor;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  margin-right: 12px;
+  vertical-align: middle;
+  transition: transform .2s ease;
+}
+
+details.spd-collapse[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.speed-template-body {
+  margin-bottom: 28px;
+}
+
+.pub-links a[aria-disabled="true"] {
+  cursor: default;
+  pointer-events: none;
+}
+
+.template-result-panel .section-body {
+  margin-bottom: 12px;
+}
+
+body:not(.dark-mode) .hero {
+  background: #fdfdfd;
+}
+
+body.dark-mode .hero,
+body.dark-mode .content-section,
+body.dark-mode .content-section:nth-child(even) {
+  background: #090d12;
+}
+
+@media (max-width: 768px) {
+  /* a forced 4 + 5 split orphans a name on a phone; let the list flow */
+  .hero-author-line {
+    display: inline;
+  }
+
+  .hero-title {
+    white-space: normal;
+    line-height: 1.2;
+    padding: 40px 0 22px;
+  }
+}
+
+/* ===== CrossBFM Layer ===== */
+
+/* Figures. The source PNGs are flattened onto white, so they always sit in a
+   light frame regardless of theme; the frame keeps that deliberate. */
+.fig {
+  margin: 28px 0 0;
+}
+
+.fig-frame {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 14px;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.fig-frame img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.fig figcaption {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+  margin-top: 12px;
+  text-align: left;
+}
+
+.fig figcaption strong {
+  color: var(--color-text);
+}
+
+/* Hero teaser: the pipeline figure spans the same width as the abstract text. */
+.hero-teaser-wrap .fig {
+  max-width: none;
+  margin: 32px auto 0;
+}
+
+.hero-teaser-wrap .fig figcaption {
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.75;
+  margin-top: 14px;
+}
+
+/* Inline math-ish symbols and identifiers. */
+.mono {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.92em;
+  white-space: nowrap;
+}
+
+/* Display equations. */
+.eq-block {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 20px 0 22px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.dark-mode .eq-block {
+  border-color: var(--color-border);
+}
+
+.eq {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 18px;
+  line-height: 2.1;
+  color: var(--color-text);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.eq em {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.08em;
+}
+
+/* A table figure sits between two runs of prose rather than above a divider, so
+   it needs the trailing gap the image figures get from what follows them. */
+.fig-table {
+  margin-bottom: 34px;
+}
+
+/* Table captions, matching figure captions. */
+.table-caption {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+  margin: 12px 0 0;
+  white-space: normal;
+}
+
+/* Reached by screen readers only — a <caption> naming a table whose visible
+   caption sits outside it, so the table is not announced unlabelled. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* TL;DR callout at the top of the abstract. */
+.tldr {
+  border-left: 3px solid var(--color-accent);
+  padding: 2px 0 2px 16px;
+}
+
+@media (max-width: 1200px) {
+  .fig-frame {
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+  .eq {
+    font-size: 12px;
+  }
+
+  .eq-block {
+    padding: 14px;
+  }
+}
+
+/* Hero fits one viewport: the teaser figure replaces some of the title padding. */
+.hero .hero-title {
+  padding: 30px 0 16px;
+}
+
+.hero-teaser-wrap {
+  margin-top: 20px;
+}
+
+.hero-teaser-wrap .fig {
+  max-width: none;
+  margin-top: 0;
+}
+
+/* Portrait-ish plots read better constrained; wide panels stay full width. */
+.fig-narrow {
+  max-width: 820px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== CrossBFM Wordmark =====
+   The project name carries the hero: it is set large and gradient-filled, and
+   the subtitle drops in size so the two read as name + descriptor rather than
+   one long title. The blue -> green ramp mirrors the pipeline figure's
+   source -> target palette. */
+.hero-title .title-p1 {
+  /* inline-block so the gradient box hugs the word rather than the hero width,
+     which would clip both ends of the ramp. */
+  display: inline-block;
+  font-size: clamp(2.6rem, 7.6vw, 5.3rem);
+  font-weight: 1500;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  margin-bottom: 0.2em;
+  color: var(--color-text);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .hero-title .title-p1 {
+    background-image: linear-gradient(100deg, #79e659 0%, #31a740 45%, #1d6b0a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+
+  body.dark-mode .hero-title .title-p1 {
+    background-image: linear-gradient(100deg, #79e659 0%, #31a740 45%, #27aa06 100%);
+  }
+}
+
+.hero-title .title-p2 {
+  font-size: clamp(1.05rem, 2.15vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+@media (max-width: 768px) {
+  .hero-title .title-p1 {
+    font-size: clamp(2.1rem, 9vw, 2.8rem);
+  }
+}
+
+/* ===== Results Subsections =====
+   Three stacked subsections, all visible at once — no tabs and no collapsing. */
+.results-block {
+  margin-top: 56px;
+  padding-top: 40px;
+  border-top: 1px solid var(--color-border);
+}
+
+.results-subhead {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin-bottom: 20px;
+}
+
+.results-kicker {
+  font-size: 0.62em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.results-subsubhead {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--color-text);
+  margin: 30px 0 10px;
+}
+
+.results-block .fig {
+  margin-top: 24px;
+}
+
+.results-block .spd-table-wrap {
+  margin-top: 26px;
+}
+
+/* ===== Latin Modern (equations) =====
+   Self-hosted subsets of the GUST Latin Modern faces, so the display equations
+   match the paper regardless of what the visitor has installed. LM Math is
+   listed second in the stack purely as a per-glyph fallback: the text faces
+   carry no sum sign or Greek. */
+@font-face {
+  font-family: 'LM Roman';
+  src: url('assets/fonts/lmroman10-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LM Roman';
+  src: url('assets/fonts/lmroman10-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LM Roman';
+  src: url('assets/fonts/lmroman10-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LM Math';
+  src: url('assets/fonts/latinmodern-math.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.eq {
+  font-family: 'LM Roman', 'LM Math', 'Latin Modern Roman', 'Latin Modern Math',
+    'CMU Serif', 'Computer Modern', Georgia, serif;
+  font-size: 20px;
+  line-height: 2;
+  letter-spacing: 0;
+}
+
+/* Variables are italic in the same face, not a different serif. */
+.eq em {
+  font-family: inherit;
+  font-size: 1em;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .eq {
+    font-size: 16px;
+  }
+}
+
+/* Hat accent drawn as a positioned circumflex: Latin Modern has no precomposed
+   z-hat, and a combining mark over an unanchored base (D) collapses into the
+   letter. */
+.eq .hat,
+.mm-eq .hat {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+}
+
+.eq .hat::after,
+.mm-eq .hat::after {
+  content: "^";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0.12em;
+  text-align: center;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.eq .hat.cap::after {
+  top: -0.22em;
+}
+
+/* ===== Bar chart (data scaling) =====
+   Single-hue ordinal green ramp, light->dark with the corpus fraction. Both the
+   light and dark steps pass the ordinal palette checks (monotone lightness,
+   >=0.06 adjacent gaps, light end clearing its surface). */
+.chart-card {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 20px 16px 12px;
+}
+
+body.dark-mode .chart-card {
+  border-color: var(--color-border);
+}
+
+.barchart {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-primary);
+}
+
+.barchart .grid line {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.barchart .grid line.axis {
+  stroke: var(--color-text-secondary);
+}
+
+.barchart .control-rule {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.barchart .ytick text {
+  font-size: 13px;
+  fill: var(--color-text-secondary);
+}
+
+.barchart .axis-title {
+  font-size: 14px;
+  font-weight: 500;
+  fill: var(--color-text-secondary);
+}
+
+.barchart .axis-note {
+  font-size: 12px;
+  fill: var(--color-text-secondary);
+  opacity: 0.75;
+}
+
+.barchart .val {
+  font-size: 15px;
+  font-weight: 600;
+  fill: var(--color-text);
+}
+
+.barchart .cat {
+  font-size: 15px;
+  fill: var(--color-text-secondary);
+}
+
+.barchart .bar path {
+  transition: opacity var(--transition-fast);
+}
+
+.barchart .bar:hover path {
+  opacity: 0.78;
+}
+
+.barchart .b1 path { fill: #8bbd50; }
+.barchart .b2 path { fill: #76a738; }
+.barchart .b3 path { fill: #61911c; }
+.barchart .b4 path { fill: #4e7b00; }
+.barchart .b5 path { fill: #3a6700; }
+.barchart .b6 path { fill: #285200; }
+.barchart .b7 path { fill: #153f00; }
+
+body.dark-mode .barchart .b1 path { fill: #c3f98a; }
+body.dark-mode .barchart .b2 path { fill: #ade173; }
+body.dark-mode .barchart .b3 path { fill: #97ca5d; }
+body.dark-mode .barchart .b4 path { fill: #82b346; }
+body.dark-mode .barchart .b5 path { fill: #6d9d2d; }
+body.dark-mode .barchart .b6 path { fill: #59880a; }
+body.dark-mode .barchart .b7 path { fill: #457200; }
+
+/* ===== Bar chart (tracking & goal reaching) =====
+   The two arms differ only in conditioning, so they are a categorical pair and
+   not a ramp: the green end of the ordinal scale for the latent arm -- ours, and
+   the only arm goal reaching has -- against a slate blue for the reference-fed
+   baseline. Each pair was validated against the surface it actually sits on,
+   #ffffff light and #252525 dark; the goal bars are green because they are the
+   same latent arm asked a different question. */
+.barchart .mae-latent path { fill: #8bbd50; }
+.barchart .mae-joint path { fill: #77acee; }
+
+body.dark-mode .barchart .mae-latent path { fill: #c3f98a; }
+body.dark-mode .barchart .mae-joint path { fill: #77acee; }
+
+/* +/- 1 std over 3 seeds. The whisker crosses from inside the bar to the card
+   above it, so it takes the ink token, which reads on both. */
+.barchart .bar path.err {
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 1.5;
+  opacity: 0.5;
+}
+
+/* Goal reaching is a different task, not a third arm -- a reference-fed policy
+   has no latent to hold at all -- so the rule marks a break in kind. */
+.barchart .split-rule {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+  opacity: 0.65;
+}
+
+.barchart .band {
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--color-text-secondary);
+}
+
+.mae-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 20px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.mae-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.mae-sw {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.mae-sw-latent { background: #8bbd50; }
+.mae-sw-joint { background: #77acee; }
+
+body.dark-mode .mae-sw-latent { background: #c3f98a; }
+body.dark-mode .mae-sw-joint { background: #77acee; }
+
+@media (max-width: 768px) {
+  .barchart .val,
+  .barchart .cat {
+    font-size: 17px;
+  }
+
+  .barchart .band {
+    font-size: 15px;
+  }
+
+  .barchart .axis-note {
+    font-size: 13px;
+  }
+}
+
+/* Below ~700px the wide column chart would shrink its labels past legibility, so
+   the columns turn into rows: the same seven values in a portrait viewBox that
+   fits the screen at readable type, with no sideways scroll. Exactly one of the
+   two is rendered, so screen readers and print see a single chart. */
+.chart-narrow {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .chart-wide {
+    display: none;
+  }
+
+  /* Cap it at its authored width: stretched to a 640px card the rows would
+     render as 33px slabs with oversized type. Below 420px it scales down. */
+  .chart-narrow {
+    display: block;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  /* Rows are set in a 420-unit-wide viewBox, so they scale up on screen -- keep
+     the type at its authored size rather than the wide chart's mobile bump. */
+  .chart-narrow .val,
+  .chart-narrow .cat {
+    font-size: 15px;
+  }
+
+  .chart-narrow .ytick text,
+  .chart-narrow .axis-title {
+    font-size: 13px;
+  }
+}
+
+/* Small phones scale the 420-unit viewBox down to ~290px, so the type is
+   authored larger to land back at a readable size. */
+@media (max-width: 430px) {
+  .chart-narrow .val,
+  .chart-narrow .cat {
+    font-size: 18px;
+  }
+
+  .chart-narrow .band,
+  .chart-narrow .ytick text,
+  .chart-narrow .axis-title {
+    font-size: 15px;
+  }
+}
+
+/* ===== Real-robot video =====
+   One plain <video> with native controls rather than the scripted rollout player:
+   there is a single clip to show, nothing to synchronise against, and the native
+   element gives fullscreen and scrubbing for free. */
+.real-frame {
+  padding: 0;                 /* the frame is the video's own bezel here */
+  background: #000;           /* letterboxing reads as intentional, not as a gap */
+}
+
+.real-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;       /* holds the layout before the poster loads */
+  background: #000;
+}
+
+/* ===== Rollout demos =====
+   Three embodiments side by side on one shared timeline. They are not toggled:
+   the clips of a motion are cut to the same frames under one crop, so the
+   comparison is meant to be read across the row at a glance.
+
+   The figure runs the full text column rather than the 820px the other figures
+   use, since three panels split across it and each one wants the room. */
+.demo {
+  width: 100%;
+}
+
+/* The controls do nothing until the script wires them up, and the motion picker
+   is empty until then, so they stay hidden rather than showing as dead chrome.
+   Without JS the figure is simply absent. */
+.demo-bar,
+.demo-foot {
+  visibility: hidden;
+}
+
+.demo.is-ready .demo-bar,
+.demo.is-ready .demo-foot {
+  visibility: visible;
+}
+
+.demo-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+/* Motions change the timeline; there is nothing else to pick, since every body
+   is on screen already. */
+.demo-motions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.demo-motion {
+  padding: 4px 13px;
+  border: 1px solid transparent;
+  border-radius: 980px;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.demo-motion:hover {
+  color: var(--color-text);
+}
+
+.demo-motion[aria-pressed="true"] {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+.demo-motion:focus-visible,
+.demo-play:focus-visible,
+.demo-track:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.demo-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 980px;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.demo-play:hover {
+  border-color: var(--color-text-secondary);
+  color: var(--color-text);
+}
+
+.demo-play svg { fill: currentColor; }
+
+/* The button shows the action it performs, so the pause bars are up while it
+   plays and the play triangle only while it is stopped. */
+.demo-play .ic-play { display: none; }
+.demo.is-paused .demo-play .ic-pause { display: none; }
+.demo.is-paused .demo-play .ic-play { display: inline; }
+
+.demo-stage {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.demo-cell {
+  position: relative;
+  border: 1px solid var(--color-border-light);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-card-bg);
+}
+
+body.dark-mode .demo-cell {
+  border-color: var(--color-border);
+}
+
+.demo-vid {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* The label rides on the clip rather than under it: stacked on a phone, three
+   captions of their own would cost the height that lets all three fit at once.
+   The backdrop is the same light render in either theme, so the pill does not
+   follow the site's colours. */
+.demo-cap {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  padding: 2px 8px;
+  border-radius: 980px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #1d1d1f;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+}
+
+.demo-cap.is-placeholder {
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px dashed rgba(29, 29, 31, 0.45);
+  pointer-events: auto;
+}
+
+.demo-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 9px;
+}
+
+.demo-track {
+  position: relative;
+  flex: 1;
+  height: 4px;
+  border-radius: 980px;
+  background: var(--color-border);
+  cursor: pointer;
+}
+
+.demo-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 980px;
+  background: var(--color-text-secondary);
+}
+
+.demo-time {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A tap target of 4px is unusable on a phone, so the bar keeps its look and
+   grows an invisible one. */
+@media (hover: none) {
+  .demo-track::after {
+    content: '';
+    position: absolute;
+    inset: -12px 0;
+  }
+}
+
+/* Phones: the row becomes a column, and the clips are sized off the viewport
+   height rather than the width so that all three are on screen together --
+   comparing them is the point, and a column you have to scroll to reach is not
+   being compared.
+
+   The height is what is left of the screen after the picker, the scrubber and
+   the gaps, split three ways, so the block fits a short phone as well as a tall
+   one. dvh where it is supported, since a collapsing address bar changes vh
+   under you mid-scroll. The clamp keeps it legible on a very short screen and
+   stops it ballooning on a tall narrow window. */
+@media (max-width: 620px) {
+  .demo {
+    max-width: none;
+  }
+
+  .demo-stage {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 6px;
+  }
+
+  .demo-cell {
+    width: auto;
+    max-width: 100%;
+  }
+
+  .demo-vid {
+    height: clamp(118px, calc((100vh - 160px) / 3), 260px);
+    height: clamp(118px, calc((100dvh - 160px) / 3), 260px);
+    width: auto;
+    max-width: 100%;
+  }
+
+  .demo-motion {
+    padding: 7px 12px;
+    font-size: 12px;
+    line-height: 1.25;
+  }
+
+  .demo-cap {
+    top: 5px;
+    left: 5px;
+    font-size: 11px;
+  }
+
+  .demo-play {
+    width: 34px;
+    height: 34px;
+  }
+
+  .demo-foot {
+    margin-top: 10px;
+  }
+}
+
+/* ===== Interactive latent map =====
+   Three t-SNE panels drawn from the exported trajectories. Hovering one motion
+   highlights it in every panel; everything else recedes. */
+.latent-map {
+  position: relative;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 18px 18px 14px;
+}
+
+body.dark-mode .latent-map {
+  border-color: var(--color-border);
+}
+
+.latent-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 8px;
+  margin-bottom: 12px;
+}
+
+.latent-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.latent-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--color-border);
+  margin: 0 4px;
+}
+
+.latent-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 980px;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast),
+    background var(--transition-fast), opacity var(--transition-fast);
+}
+
+.latent-chip:hover {
+  border-color: var(--color-text-secondary);
+}
+
+.latent-chip:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Deselected: the swatch drains and the label recedes, so "off" is legible
+   without relying on color alone. */
+.latent-chip[aria-pressed="false"] {
+  color: var(--color-text-secondary);
+  border-color: transparent;
+  opacity: 0.55;
+}
+
+.latent-chip[aria-pressed="false"] i {
+  background: var(--color-text-secondary) !important;
+  opacity: 0.45;
+}
+
+.latent-chip i {
+  width: 15px;
+  height: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.latent-chip i.sw-src { background: #6b6b6b; }
+.latent-chip i.sw-tgt { background: #b9b9b9; }
+
+body.dark-mode .latent-chip i.sw-src { background: #9a9a9a; }
+body.dark-mode .latent-chip i.sw-tgt { background: #e2e2e2; }
+
+.latent-reset {
+  padding: 4px 12px;
+  border: 1px solid var(--color-accent);
+  border-radius: 980px;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.latent-reset:hover {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+/* The dark-mode accent is light, so ink on it rather than white. */
+body.dark-mode .latent-reset:hover {
+  color: #000;
+}
+
+/* Nothing is filtered: the button goes invisible but keeps its slot, so the
+   chips beside it never shift when a filter is applied or cleared. */
+.latent-reset.is-idle {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Filtered out entirely — not just dimmed, so it leaves no hover target. */
+.latent-map .is-off {
+  display: none;
+}
+
+.latent-panels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.latent-panel {
+  margin: 0;
+  min-width: 0;
+}
+
+.latent-panel figcaption {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin: 0 0 2px;
+}
+
+.latent-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: pan-y;
+}
+
+.latent-frame {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.latent-trace {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  transition: opacity var(--transition-fast);
+}
+
+.latent-trace.src-g1 {
+  stroke-width: 1;
+  opacity: 0.75;
+}
+
+.latent-trace.src-target {
+  stroke-width: 1.6;
+  opacity: 0.95;
+}
+
+.latent-hull {
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 1.2;
+  stroke-dasharray: 5 4;
+  opacity: 0.55;
+  vector-effect: non-scaling-stroke;
+  transition: opacity var(--transition-fast);
+}
+
+/* Invisible fat stroke: the hover target for a hairline curve. */
+.latent-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 11;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* Recede everything that is not the hovered motion (or hovered behavior). */
+.latent-map.is-hovering .latent-motion:not(.is-active) .latent-trace,
+.latent-map.is-hovering .latent-hull:not(.is-active) {
+  opacity: 0.12;
+}
+
+.latent-map.is-hovering .latent-motion.is-active .latent-trace {
+  opacity: 1;
+}
+
+.latent-map.is-hovering .latent-motion.is-active .latent-trace.src-target {
+  stroke-width: 2.4;
+}
+
+.latent-tip {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 7px 11px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  font-size: 14px;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+
+.latent-tip strong {
+  display: block;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 12.5px;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.latent-tip span {
+  color: var(--color-text-secondary);
+}
+
+.latent-keys {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 20px;
+  margin-top: 10px;
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+}
+
+.lk {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lk line {
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.key-src { stroke: #6b6b6b; }
+.key-tgt { stroke: #b9b9b9; }
+.key-ood { stroke: currentColor; stroke-dasharray: 5 4; }
+
+body.dark-mode .key-src { stroke: #9a9a9a; }
+body.dark-mode .key-tgt { stroke: #e2e2e2; }
+
+.latent-hint {
+  opacity: 0.8;
+  font-style: italic;
+}
+
+@media (max-width: 860px) {
+  .latent-divider {
+    display: none;
+  }
+
+  .latent-panels {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .latent-hint {
+    display: none;
+  }
+}
+
+.latent-map noscript img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+/* ===== Joint map (embodiment setup) =====
+   Four columns, each robot's actuated joints in model index order. Two hues only
+   -- categorical slots 1 and 2 -- because any two marks can end up adjacent here;
+   both clear all-pairs CVD, normal-vision and 3:1 contrast on the card in light
+   and dark. Body group rides in the run headings, not in a third hue, and every
+   mark is directly labelled, so color never carries identity alone. */
+.jointmap {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 18px 18px 14px;
+}
+
+body.dark-mode .jointmap {
+  border-color: var(--color-border);
+}
+
+.jm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 18px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.jm-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.jm-sw {
+  width: 4px;
+  height: 13px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  background: #2a78d6;
+}
+
+.jm-key .jm-sw {
+  height: 11px;
+}
+
+.jm-j.is-only .jm-sw,
+.jm-key .jm-sw.jm-only {
+  background: #eb6834;
+}
+
+body.dark-mode .jm-sw { background: #3987e5; }
+body.dark-mode .jm-j.is-only .jm-sw,
+body.dark-mode .jm-key .jm-sw.jm-only { background: #d95926; }
+
+.jm-cols {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px 12px;
+  align-items: start;
+}
+
+.jm-col {
+  min-width: 0;
+}
+
+.jm-head {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.jm-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.jm-meta {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+}
+
+/* Kinematic summary: D, B and the observation dimension 2D + 8 + 3B, which is
+   what the removed setup table used to carry. */
+.jm-nums {
+  margin-top: 3px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.jm-nums b {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.jm-nums i {
+  font-style: normal;
+  opacity: 0.5;
+}
+
+.jm-morph {
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+  opacity: 0.85;
+}
+
+/* Run heading: the group changes here, which is the block structure the
+   "legs-first" / "head-first" descriptions in the caption refer to. */
+.jm-grp {
+  margin: 10px 0 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  opacity: 0.75;
+}
+
+.jm-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.jm-j {
+  display: grid;
+  grid-template-columns: 4px 17px 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px 2px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity var(--transition-fast), background var(--transition-fast);
+}
+
+.jm-i {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 10px;
+  text-align: right;
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
+.jm-lab {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hovering one joint recedes everything that is not the same joint, so the eye
+   lands on its position in the other three columns. */
+.jm-cols.is-hovering .jm-j {
+  opacity: 0.3;
+}
+
+.jm-cols.is-hovering .jm-j.is-hit {
+  opacity: 1;
+  background: var(--color-bg-alt);
+}
+
+body.dark-mode .jm-cols.is-hovering .jm-j.is-hit {
+  background: #2f2f2f;
+}
+
+.jm-readout {
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border-light);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.jm-readout strong {
+  color: var(--color-text);
+  margin-right: 8px;
+}
+
+.jm-readout b {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.jm-absent {
+  opacity: 0.55;
+}
+
+body.dark-mode .jointmap .jm-readout {
+  border-top-color: var(--color-border);
+}
+
+/* Two columns rather than four below ~880px: four columns of joint names stop
+   fitting, and the alternative is a sideways scroll. */
+@media (max-width: 880px) {
+  .jm-cols {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 14px;
+  }
+}
+
+/* Phones: even two columns of four robots run to several screens, so the map
+   shows one robot at a time behind a picker and flows that robot's joints into
+   two columns. Above this width all four columns stay up -- comparing the
+   orderings side by side is the whole point of the figure. */
+.jm-picker {
+  display: none;
+}
+
+@media (max-width: 620px) {
+  .jm-picker {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .jm-pick {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 6px 4px;
+    border: 1px solid var(--color-border);
+    border-radius: 980px;
+    background: none;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: color var(--transition-fast), border-color var(--transition-fast),
+      background var(--transition-fast);
+  }
+
+  .jm-pick[aria-pressed="true"] {
+    border-color: var(--color-text);
+    background: var(--color-text);
+    color: var(--color-card-bg);
+  }
+
+  .jm-pick:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .jm-cols {
+    grid-template-columns: 1fr;
+  }
+
+  /* Display, not removal: the other three stay in the DOM so hovering a joint
+     can still report its index on every body. */
+  .jm-col {
+    display: none;
+  }
+
+  .jm-col.is-active {
+    display: block;
+  }
+
+  .jm-body {
+    columns: 2;
+    column-gap: 16px;
+  }
+
+  /* A run heading must never be the last thing in a column, and a joint must
+     not be split down the middle by the column break. */
+  .jm-grp {
+    break-after: avoid;
+  }
+
+  .jm-j {
+    break-inside: avoid;
+  }
+}
+
+@media (max-width: 400px) {
+  .jm-lab {
+    font-size: 11px;
+  }
+
+  .jm-j {
+    grid-template-columns: 4px 15px 1fr;
+    gap: 5px;
+  }
+}
+
+/* ===== Objective cards (Stage 1, deployment) =====
+   One card carrying an equation and the sentence that reads it — the alignment
+   loss in Stage 1, the reward projection at deployment. */
+.loss-anatomy {
+  margin: 30px 0 8px;
+}
+
+.loss-sum {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px 18px 14px;
+  text-align: center;
+  container-type: inline-size;
+}
+
+body.dark-mode .loss-sum {
+  border-color: var(--color-text-secondary);
+}
+
+/* The equation sizes itself from the card rather than the viewport: `.eq` is
+   white-space: nowrap and cannot reflow, so the font size is what has to give.
+   The px value first is the fallback where cqw is unsupported, and the scroller
+   is the backstop for the narrowest phones.
+
+   5cqw sets the longest equation to ~80% of the card width, which is what phones
+   get: there the cap is far out of reach and the type scales with the card. The
+   cap binds from about a 600px card upward, so desktop still reads at 30px and
+   is unaffected by this ratio — it only governs how small screens behave. */
+.loss-sum .eq {
+  font-size: 17px;
+  font-size: clamp(15px, 5cqw, 30px);
+  line-height: 1.7;
+  margin: 6px 0 12px;
+  overflow-x: auto;
+}
+
+/* Continuation line — the definition that follows the objective it appears in.
+   Held at 80% of the objective's ratio so it stays visibly subordinate at every
+   width rather than crowding the line it qualifies. */
+.loss-sum .eq-sub {
+  font-size: 14px;
+  font-size: clamp(13px, 4cqw, 24px);
+  margin-top: -6px;
+}
+
+.loss-note {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.loss-note strong {
+  color: var(--color-text);
+}
+
+/* The prose under the equation is a paragraph, not a caption: centring it the
+   way the equation is centred would leave it ragged on both edges. */
+.loss-solo .loss-note {
+  text-align: left;
+}
+
+/* ===== Stages 2-3, side by side ===== */
+.stage-pair {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 26px;
+  margin-top: 6px;
+}
+
+.stage-col {
+  min-width: 0;
+}
+
+.stage-col .fig-frame {
+  padding: 10px;
+}
+
+.stage-role {
+  margin: 14px 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.stage-col p:not(.stage-role) {
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+@media (max-width: 760px) {
+  .stage-pair {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+/* The two stage figures have slightly different aspect ratios; a common box keeps
+   their captions on one line. The frame is white, so the letterboxing is invisible. */
+.stage-col .fig-frame img {
+  aspect-ratio: 2.6 / 1;
+  object-fit: contain;
+}
+
+
+/* ===== Unified encoder architecture =====
+   Three stacked stages: the robots' own arrays, the index maps that scatter them
+   into the canonical input, and the network reading the result. The 163-dim bar sits in
+   the middle of the second stage, with the joint table above it and the key-body
+   table below, so both tables are adjacent to the vector they write into and
+   hovering a row in either lights the dims it occupies.
+
+   Block palette: three categorical hues -- key-body blue, root teal, joint
+   orange -- plus a reserved neutral for the two mask blocks, which are
+   structural rather than a fourth series. Validated with the dataviz palette
+   checker on both surfaces (all-pairs CVD dE 13.4 light / 12.1 dark, normal
+   vision 15.9 / 15.7, all above 3:1). Position vs. velocity inside a family is
+   the same hue at two lightnesses, and every block is directly labelled, so
+   colour is never the only cue. */
+.slotmap {
+  /* Height of the hover readout box. See the .ue-readout rule. */
+  --ue-readout-h: 88px;
+  --ue-kb: #3067b8;
+  --ue-kb2: #7ba3d8;
+  --ue-root: #0e8f86;
+  --ue-j: #c9601c;
+  --ue-j2: #e0a071;
+  --ue-mask: #8d99a6;
+  /* Whatever the marks are currently sitting on: the spacer gaps between blocks
+     and the ring around a lit dim are cut out of the surface, so they follow it
+     into the banded middle rather than being hard-coded to the card. */
+  --ue-surface: var(--color-card-bg);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 20px 20px 16px;
+}
+
+body.dark-mode .slotmap {
+  --ue-kb: #4c8fe0;
+  --ue-kb2: #2f5c8f;
+  --ue-root: #12a48f;
+  --ue-j: #d4762b;
+  --ue-j2: #8a501f;
+  --ue-mask: #7c8894;
+  border-color: var(--color-border);
+}
+
+.ue-stages {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.ue-stage {
+  min-width: 0;
+}
+
+/* Each stage after the first is preceded by a downward arrow, so the four read
+   as one pipeline rather than four unrelated panels. */
+.ue-stage + .ue-stage {
+  padding-top: 26px;
+  position: relative;
+  border-top: 1px solid var(--color-border-light);
+}
+
+body.dark-mode .ue-stage + .ue-stage {
+  border-top-color: var(--color-border);
+}
+
+.ue-stage + .ue-stage::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin-left: -5px;
+  border-right: 1.5px solid var(--color-border);
+  border-bottom: 1.5px solid var(--color-border);
+  transform: rotate(45deg);
+  background: var(--ue-surface);
+}
+
+.ue-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+}
+
+.ue-num {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--color-text);
+}
+
+body.dark-mode .ue-num {
+  color: #000;
+}
+
+/* --- stage 1: the raw arrays --- */
+.ue-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.ue-card {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 12px 14px 13px;
+  min-width: 0;
+}
+
+.ue-card-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.ue-card-order {
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+  margin-bottom: 9px;
+}
+
+.ue-card-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.ue-card-rows > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ue-card-rows dt {
+  color: var(--color-text-secondary);
+}
+
+.ue-card-rows dd {
+  color: var(--color-text);
+}
+
+.ue-fills {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 11px;
+}
+
+.ue-fill-lab {
+  display: block;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-bottom: 3px;
+}
+
+.ue-fill-lab b {
+  color: var(--color-text);
+}
+
+.ue-meter {
+  display: block;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--color-border-light);
+  overflow: hidden;
+}
+
+body.dark-mode .ue-meter {
+  background: var(--color-border);
+}
+
+.ue-meter i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+}
+
+.ue-meter-j { background: var(--ue-j); }
+.ue-meter-kb { background: var(--ue-kb); }
+
+/* --- stage 2: the index tables, with the vector between them --- */
+/* Both maps are long tables that answer a question most readers do not have on
+   a first pass -- which column of which robot fills which index. The default
+   view is the vector they produce; each map is one click away, in the position
+   it feeds from. */
+.ue-map {
+  margin: 0;
+  border: 1px solid var(--color-border-light);
+  border-radius: 10px;
+  padding: 0 14px;
+}
+
+body.dark-mode .ue-map {
+  border-color: var(--color-border);
+}
+
+.ue-map-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px 12px;
+  padding: 11px 0;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.ue-map-head::-webkit-details-marker {
+  display: none;
+}
+
+.ue-map-head::before {
+  content: "";
+  flex: none;
+  align-self: center;
+  width: 0;
+  height: 0;
+  border-left: 6px solid var(--color-text-secondary);
+  border-top: 4.5px solid transparent;
+  border-bottom: 4.5px solid transparent;
+  transition: transform .2s ease;
+}
+
+.ue-map[open] > .ue-map-head::before {
+  transform: rotate(90deg);
+}
+
+.ue-map-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.ue-map-sub {
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+
+.ue-map > .ue-panel {
+  padding-bottom: 14px;
+}
+
+.ue-map .ue-panel-sub {
+  margin-bottom: 8px;
+}
+
+.ue-panel {
+  min-width: 0;
+}
+
+.ue-panel-head {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+/* Names the region of the bar this table writes into, so the tie between a
+   table and the middle of the figure is stated and not only hoverable. */
+.ue-panel-to {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.ue-panel-sub {
+  display: block;
+  font-weight: 400;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.ue-jgrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 26px;
+}
+
+.ue-jcol {
+  min-width: 0;
+}
+
+.ue-grp {
+  margin: 10px 0 3px;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-secondary);
+}
+
+.ue-jcol > .ue-grp:first-of-type {
+  margin-top: 6px;
+}
+
+/* Eight of the 33 indices by default -- one ordinary row, then one for each way
+   the bodies disagree. The split at index 15 puts four in each column, so the
+   condensed table is still two even columns under their own headers. The rest
+   of the rows are in the DOM the whole time: the mask fingerprint can point at
+   any of the 33, and pinning a hidden one opens the table. */
+.ue-jgrid:not(.is-full) .ue-row-j:not(.is-rep),
+.ue-jgrid:not(.is-full) .ue-grp:not(.is-rep) {
+  display: none;
+}
+
+/* Why a row is one of the eight. It runs the full width of the row on a second
+   line, and goes away once all 33 are showing and the eight stop being special. */
+.ue-why {
+  grid-column: 1 / -1;
+  padding: 0 0 2px 24px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+.ue-jgrid.is-full .ue-why,
+.ue-panel.is-full .ue-sub-cond {
+  display: none;
+}
+
+.ue-morewrap {
+  margin-top: 12px;
+}
+
+.ue-more {
+  padding: 5px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: none;
+  font-family: inherit;
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color .12s ease, border-color .12s ease;
+}
+
+.ue-more:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-secondary);
+}
+
+/* One row grammar for both tables: an index name, then one cell per robot. */
+.ue-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: 6px;
+  padding: 1.5px 4px;
+  border-radius: 5px;
+}
+
+.ue-row-head {
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-secondary);
+}
+
+.ue-row-head .ue-cell {
+  justify-content: flex-start;
+}
+
+.ue-row-j, .ue-row-kb {
+  cursor: default;
+  transition: background .12s ease;
+}
+
+.ue-slot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ue-jn {
+  flex: none;
+  width: 18px;
+  font-size: 10px;
+  font-style: normal;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+
+.ue-mark {
+  font-style: normal;
+  font-size: 8px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.ue-mark-off { color: var(--ue-kb); }
+.ue-mark-top { color: var(--ue-j); }
+
+.ue-cell {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--color-text);
+}
+
+.ue-cell.is-off {
+  color: var(--color-text-secondary);
+}
+
+.ue-dash {
+  color: var(--color-text-secondary);
+}
+
+.ue-flag {
+  font-style: normal;
+  font-size: 9.5px;
+  padding: 0 3px;
+  border-radius: 3px;
+  color: #fff;
+  background: var(--ue-j);
+  white-space: nowrap;
+}
+
+.ue-cell.is-drop .ue-flag {
+  color: var(--color-text-secondary);
+  background: none;
+  border: 1px dotted var(--color-border);
+}
+
+.ue-cell.is-body {
+  align-items: baseline;
+  gap: 5px;
+}
+
+.ue-bodyname {
+  font-size: 11px;
+  color: var(--color-text);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ue-bodyi {
+  flex: none;
+  font-style: normal;
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+
+/* The marks the rows carry, explained once, under the table they appear in. */
+.ue-key {
+  margin-top: 12px;
+  padding: 11px 12px;
+  border-radius: 8px;
+  background: var(--color-bg-alt);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+body.dark-mode .ue-key {
+  background: #1a1a1c;
+}
+
+.ue-key-head {
+  margin-bottom: 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-secondary);
+}
+
+.ue-key-items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px 26px;
+}
+
+.ue-key .ue-mark {
+  display: inline-block;
+  width: 30px;
+  font-size: 10px;
+  text-align: center;
+}
+
+.ue-key .ue-flag {
+  display: inline-block;
+  min-width: 30px;
+  text-align: center;
+}
+
+.ue-flag-drop {
+  color: var(--color-text-secondary);
+  background: none;
+  border: 1px dotted var(--color-border);
+}
+
+/* While an index is being probed the rest of the table steps back, so the one row
+   and its three lit dims are what the eye follows. */
+.slotmap.is-probing .ue-row-j,
+.slotmap.is-probing .ue-row-kb {
+  opacity: 0.45;
+}
+
+.slotmap.is-probing .ue-row.is-hit {
+  opacity: 1;
+  background: var(--color-highlight-bg);
+}
+
+.ue-callout {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--ue-kb);
+  border-radius: 0 6px 6px 0;
+  background: var(--color-bg-alt);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+/* The hinge of the figure: the vector both tables write into, banded off so it
+   reads as the thing they meet at rather than as a third table. */
+.ue-mid {
+  --ue-surface: var(--color-bg-alt);
+  position: relative;
+  margin: 26px 0;
+  padding: 15px 16px 13px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border-light);
+  background: var(--color-bg-alt);
+}
+
+body.dark-mode .ue-mid {
+  --ue-surface: #1a1a1c;
+  border-color: var(--color-border);
+  background: #1a1a1c;
+}
+
+.ue-mid-head {
+  margin-bottom: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* An arrow into the band from the table above and out of it into the one below,
+   so the reading order is unambiguous on a first pass. */
+.ue-mid::before,
+.ue-mid::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin-left: -5px;
+  border-right: 1.5px solid var(--color-border);
+  border-bottom: 1.5px solid var(--color-border);
+  transform: rotate(45deg);
+}
+
+.ue-mid::before { top: -19px; }
+.ue-mid::after { bottom: -19px; }
+
+/* Fixed, not min-height: the box is read while the pointer moves between index
+   rows, and a box that resizes under the pointer drags the whole figure with
+   it. --ue-readout-h is the one number to change if the copy grows; it is set
+   per breakpoint because the same sentence wraps to three lines on a phone and
+   one on a desktop. overflow keeps anything unexpected reachable rather than
+   clipped. */
+.ue-readout {
+  margin-top: 14px;
+  padding: 9px 12px;
+  height: var(--ue-readout-h);
+  overflow: auto;
+  border-radius: 8px;
+  background: var(--color-bg-alt);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+}
+
+/* Inside the band the readout needs the opposite surface to stay legible. */
+.ue-mid .ue-readout {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border-light);
+}
+
+body.dark-mode .ue-readout,
+body.dark-mode .ue-callout {
+  background: #1a1a1c;
+}
+
+body.dark-mode .ue-mid .ue-readout {
+  background: var(--color-card-bg);
+  border-color: var(--color-border);
+}
+
+.ue-readout strong {
+  color: var(--color-text);
+  margin-right: 8px;
+}
+
+.ue-dims {
+  color: var(--color-text-secondary);
+}
+
+.ue-where {
+  display: block;
+  color: var(--color-text);
+}
+
+.ue-where b {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.ue-absent {
+  color: var(--color-text-secondary);
+}
+
+.ue-note {
+  display: block;
+  color: var(--color-text-secondary);
+}
+
+/* --- stage 3: the 163-dim vector --- */
+.ue-track {
+  position: relative;
+  display: flex;
+  height: 30px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--color-border-light);
+}
+
+.ue-seg {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 100%;
+  /* A 2px surface gap between fills, so adjacent blocks never merge. */
+  box-shadow: inset -2px 0 0 var(--ue-surface);
+  overflow: hidden;
+}
+
+.ue-seg:last-of-type {
+  box-shadow: none;
+}
+
+.ue-seg-lab {
+  font-size: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.ue-seg.is-kb { background: var(--ue-kb); }
+.ue-seg.is-kb2 { background: var(--ue-kb2); }
+.ue-seg.is-root { background: var(--ue-root); }
+.ue-seg.is-j { background: var(--ue-j); }
+.ue-seg.is-j2 { background: var(--ue-j2); }
+.ue-seg.is-mask { background: var(--ue-mask); }
+
+.ue-seg.is-kb2 .ue-seg-lab,
+.ue-seg.is-j2 .ue-seg-lab {
+  color: #17202a;
+}
+
+body.dark-mode .ue-seg.is-kb2 .ue-seg-lab,
+body.dark-mode .ue-seg.is-j2 .ue-seg-lab {
+  color: #f5f5f7;
+}
+
+.ue-marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ue-mk {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  min-width: 2px;
+  background: var(--color-text);
+  box-shadow: 0 0 0 1px var(--ue-surface);
+}
+
+body.dark-mode .ue-mk {
+  background: #ffffff;
+}
+
+/* A bracket for the region that is too thin to label inside the bar. */
+.ue-anno {
+  position: relative;
+  height: 15px;
+}
+
+.ue-anno-item {
+  position: absolute;
+  top: 7px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--color-text-secondary);
+}
+
+.ue-anno-item::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 1px;
+  height: 6px;
+  background: var(--color-border);
+}
+
+.ue-ruler {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 10.5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--color-text-secondary);
+}
+
+.ue-blegend {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 20px;
+  margin-top: 14px;
+}
+
+.ue-bitem {
+  display: grid;
+  grid-template-columns: 4px auto 1fr;
+  align-items: baseline;
+  gap: 3px 7px;
+  font-size: 11.5px;
+}
+
+.ue-sw {
+  grid-row: 1 / span 2;
+  width: 4px;
+  height: 13px;
+  border-radius: 2px;
+  align-self: center;
+}
+
+.ue-bitem.is-kb .ue-sw { background: var(--ue-kb); }
+.ue-bitem.is-kb2 .ue-sw { background: var(--ue-kb2); }
+.ue-bitem.is-root .ue-sw { background: var(--ue-root); }
+.ue-bitem.is-j .ue-sw { background: var(--ue-j); }
+.ue-bitem.is-j2 .ue-sw { background: var(--ue-j2); }
+.ue-bitem.is-mask .ue-sw { background: var(--ue-mask); }
+
+.ue-bname {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--color-text);
+}
+
+.ue-brange {
+  font-size: 10.5px;
+  color: var(--color-text-secondary);
+}
+
+.ue-bnote {
+  grid-column: 2 / span 2;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+/* --- the j_mask fingerprint --- */
+.ue-fingerprint {
+  margin-top: 20px;
+}
+
+.ue-fp-head {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.ue-fp-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ue-fp-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: 10px;
+}
+
+.ue-fp-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.ue-fp-strip {
+  display: grid;
+  grid-template-columns: repeat(33, 1fr);
+  gap: 2px;
+}
+
+.ue-fp-cell {
+  height: 13px;
+  border-radius: 2px;
+  background: var(--color-border-light);
+  cursor: default;
+}
+
+.ue-fp-cell.is-on {
+  background: var(--ue-mask);
+}
+
+/* Same specificity as the .is-on rule above it, so the zero cells have to be
+   re-stated for the dark card rather than winning by accident. */
+body.dark-mode .ue-fp-cell {
+  background: #313135;
+}
+
+body.dark-mode .ue-fp-cell.is-on {
+  background: var(--ue-mask);
+}
+
+.ue-fp-cell.is-hit {
+  outline: 1.5px solid var(--color-text);
+  outline-offset: 1px;
+}
+
+.ue-fp-count {
+  font-size: 11px;
+  text-align: right;
+  color: var(--color-text-secondary);
+}
+
+.ue-fp-count b {
+  color: var(--color-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* --- stage 4: the network --- */
+.ue-net {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.ue-net-step {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  padding: 7px 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--color-text);
+}
+
+.ue-net-step i {
+  font-style: normal;
+  font-family: var(--font-primary);
+  font-size: 10.5px;
+  color: var(--color-text-secondary);
+}
+
+.ue-net-step b {
+  font-weight: 700;
+}
+
+.ue-net-out {
+  border-color: var(--acc-tgt);
+}
+
+.ue-net-arrow {
+  align-self: center;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+/* The breakpoint is where this box's longest note gains a line, measured, not
+   guessed -- so it does not have to match the layout breakpoints below. */
+@media (max-width: 1290px) {
+  .slotmap { --ue-readout-h: 116px; }
+}
+
+@media (max-width: 900px) {
+  .ue-jgrid {
+    grid-template-columns: 1fr;
+  }
+  .ue-blegend {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ue-key-items {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .slotmap {
+    padding: 16px 12px 12px;
+  }
+  .ue-inputs {
+    grid-template-columns: 1fr;
+  }
+  .ue-blegend {
+    grid-template-columns: 1fr;
+  }
+  /* A phone column is too narrow for the name and the index both. The name is
+     the half that carries the point, so it stays and truncates; tapping the row
+     puts all three names in full in the readout. */
+  .ue-bodyi {
+    display: none;
+  }
+  .ue-bodyname {
+    font-size: 10px;
+  }
+  .ue-row {
+    gap: 4px;
+  }
+  .ue-slot {
+    font-size: 11.5px;
+  }
+  .ue-fp-row {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+  .ue-fp-count {
+    display: none;
+  }
+  .slotmap { --ue-readout-h: 140px; }
+  .ue-mid {
+    padding: 12px 11px 11px;
+  }
+  .ue-why {
+    padding-left: 0;
+  }
+}
+
+/* ===== Stage 1 in two lines =====
+   Eq. 6 and Eq. 7 sit between the contribution cards and the encoder figure, so
+   each one is a centered card with its reading underneath in the text column --
+   the equation carries the claim, the note says what it is for. */
+.eq-pair {
+  margin-top: 34px;
+}
+
+.eq-item + .eq-item {
+  margin-top: 4px;
+}
+
+.eq-note {
+  max-width: 840px;
+  margin: -6px auto 0;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+
+.eq-note strong {
+  color: var(--color-text);
+}
+
+.eq-gap {
+  margin-left: 26px;
+}
+
+.eq-frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  margin: 0 5px;
+  font-size: 0.72em;
+  line-height: 1.15;
+}
+
+.eq-frac > span:first-child {
+  border-bottom: 1px solid currentColor;
+  padding: 0 4px;
+}
+
+@media (max-width: 640px) {
+  .eq-gap {
+    display: block;
+    margin-left: 0;
+  }
+}
+
+/* ===== Optional figures =====
+   Two figures on this page are detail rather than argument: the index maps under
+   the encoder architecture and the threshold transport under the reward
+   decoupling. Both start closed behind this button so each subsection reads as
+   diagram -> components -> results at first pass, and opens into the mechanism
+   only if the reader asks. The button is the .ue-more pill one step up in size,
+   because it governs a whole figure rather than a row count inside one. */
+[hidden] {
+  display: none !important;
+}
+
+/* The light version is the default, here and with JavaScript off: no buttons,
+   and the three panels keep the hidden attribute they ship with. */
+.fig-togglewrap {
+  display: none;
+  margin: 16px 0 26px;
+}
+
+body.full-version .fig-togglewrap {
+  display: block;
+}
+
+.ver-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.ver-btn {
+  padding: 3px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font-family: inherit;
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease;
+}
+
+.ver-btn.is-on {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+.ver-btn:not(.is-on):hover {
+  color: var(--color-text);
+}
+
+.fig-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: none;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color .12s ease, border-color .12s ease;
+}
+
+.fig-toggle::before {
+  content: '+';
+  font-size: 13px;
+  line-height: 1;
+}
+
+.fig-toggle[aria-expanded="true"]::before {
+  content: '\2212';
+}
+
+.fig-toggle:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-secondary);
+}
+
+/* ===== The encoder architecture diagram =====
+   figures/encoder.png from the appendix, rebuilt in the page's own type so it
+   follows dark mode and reflows on a phone. The fills are the figure's own and
+   stay light in both themes -- they are the paper's key, not page chrome -- so
+   the text on them is pinned dark rather than inherited.
+
+   Strip widths follow the paper's, which are label-driven, not proportional to
+   the dimension counts: 8 mask dims need as much room to be named as 24 position
+   dims. The index maps behind the toggle are where the widths are actually read. */
+.encarch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 24px 18px 22px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-card-bg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* The diagram is one narrow column; a full-width card would be mostly margin. */
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.ea-strip {
+  display: flex;
+  gap: 2px;
+  width: 100%;
+  max-width: 620px;
+}
+
+.ea-seg {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 9px 4px;
+  border-radius: 3px;
+  font-size: 12px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #1d1d1f;
+}
+
+.ea-kbpos { background: #afef62; flex-grow: 25; }
+.ea-kbvel { background: #8fce42; flex-grow: 25; }
+.ea-mask  { background: #d1d4cd; flex-grow: 22; }
+.ea-root  { background: #8aa5f5; flex-grow: 18; }
+.ea-q     { background: #f4ca90; flex-grow: 9; }
+.ea-qd    { background: #e6ac5a; flex-grow: 9; }
+
+.ea-arrow {
+  font-size: 15px;
+  line-height: 1;
+  color: var(--color-text-secondary);
+}
+
+.ea-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 16px;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+}
+
+.ea-plus {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.ea-blk {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 16px;
+  border-radius: 4px;
+  background: #d6f0b5;
+  font-size: 12.5px;
+  text-align: center;
+  color: #1d1d1f;
+}
+
+/* The trunk boxes share one width, so the column reads as a single path. */
+.ea-trunk {
+  width: min(250px, 100%);
+}
+
+/* x4 hangs outside the box, as in the paper, so the box stays on the column's
+   center line rather than being pushed off it by the label. */
+.ea-row {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.ea-mult {
+  position: absolute;
+  left: 100%;
+  top: 6px;
+  margin-left: 9px;
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+
+.ea-out {
+  background: #c1ff72;
+  font-weight: 700;
+}
+
+.ea-out em {
+  font-style: normal;
+}
+
+@media (max-width: 560px) {
+  .ea-seg {
+    padding: 8px 2px;
+    font-size: 9.5px;
+  }
+  .ea-group {
+    gap: 9px;
+    padding: 10px 11px;
+  }
+  .ea-blk {
+    padding: 9px 10px;
+    font-size: 11.5px;
+  }
+  .ea-mult {
+    position: static;
+    margin-left: 7px;
+    align-self: center;
+  }
+}
+
+/* ===== Reward optimization: the closed form and what replaces its two halves =====
+   The subsection reads top to bottom as one substitution: the source-side formula
+   with its two unavailable components badged, a card per component saying what
+   takes its place, and the three-step graph that runs on the target instead. The
+   badges are the only thread between them, so they carry the source accent in all
+   three places and nothing else does.
+
+   The graph reuses .ue-net from the encoder figure rather than restating it: it is
+   the same object -- a row of boxed steps with arrows -- and having two grammars
+   for that on one page would read as two different kinds of thing. */
+/* An equation is one short line, so its card is sized to the line and centered
+   rather than run to the column width. */
+.eq-fit {
+  width: max-content;
+  max-width: 100%;
+  margin: 18px auto 22px;
+  padding: 12px 22px;
+}
+
+.rw-eq .eq {
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+/* Parentheses at the display size sit visually small against a tall sum. */
+.rw-paren {
+  font-size: 1.25em;
+  vertical-align: -0.08em;
+}
+
+.rw-cond {
+  margin-left: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* The two components the target does not have. */
+.rw-need {
+  color: var(--acc-src);
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.rw-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: var(--acc-src);
+  color: #fff;
+  font-family: var(--font-primary);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: 0.08em;
+}
+
+/* Two cards, not three: .contrib-grid's own three-column rule is declared later
+   in this file, so the pair needs the extra class to win. They keep a readable
+   card width and center as a pair under the equation. */
+.contrib-grid.rw-grid {
+  grid-template-columns: repeat(2, minmax(0, 400px));
+  justify-content: center;
+  margin-top: 0;
+}
+
+/* .contrib's border-top shorthand is declared later in the file, so this needs
+   the extra class to win rather than the source accent quietly losing. */
+.contrib.rw-card {
+  border-top-color: var(--acc-src);
+}
+
+.rw-card h4 {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* The substitution itself, set apart from the sentence that motivates it. The
+   green here is --color-accent, not --acc-tgt: the latter is a 2:1 fill colour,
+   fine behind an area and not behind 12px text. */
+.rw-swap {
+  display: block;                 /* its own line: it is the card's conclusion,
+                                     not the last clause of the sentence */
+  width: max-content;
+  max-width: 100%;
+  margin-top: 10px;
+  padding: 3px 9px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-bg-alt);
+  color: var(--color-accent);
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+/* White on the dark-mode pink is 2.5:1; the badge is 10px, so it takes ink. */
+body.dark-mode .rw-badge {
+  color: #1d1d1f;
+}
+
+.rw-fig {
+  margin-top: 26px;
+}
+
+.rw-graph-head {
+  margin: 0 0 10px;
+  font-size: 13.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* Three steps, not the encoder's seven, so they can afford to fill the row. */
+.rw-net .ue-net-step {
+  flex: 1 1 210px;
+  font-size: 12.5px;
+}
+
+.rw-net .ue-net-step b {
+  font-weight: 600;
+}
+
+.rw-net .ue-net-step i {
+  margin-top: 3px;
+  font-size: 11px;
+}
+
+@media (max-width: 860px) {
+  .contrib-grid.rw-grid {
+    grid-template-columns: minmax(0, 400px);
+  }
+  .rw-net .ue-net-arrow {
+    transform: rotate(90deg);
+  }
+}
+
+/* ===== Reward transport through the two marginals =====
+   Three rows on one shared x axis (the arm-tip height in metres): the source's
+   distribution of that feature, the two CDFs, and the target's distribution
+   mirrored downward. A threshold enters at the top and leaves at the bottom
+   having been re-read at the same quantile.
+
+   Two categorical hues only -- source and target -- carried straight from the
+   page's --acc-src / --acc-tgt so the figure agrees with the latent map about
+   which body is which. In light mode the site green is a 2:1 fill colour, which
+   is fine behind a 70px area but not for a 2px curve, so the figure darkens it
+   to #2c8f2c; validated with the dataviz checker on both surfaces (CVD dE 8.9
+   light / 10.2 dark, normal vision 34.6 / 36.2, contrast >= 3:1 throughout).
+   Line style carries the same distinction a second time: the source curve is
+   solid and its threshold verticals dashed, and every curve is direct-labelled. */
+.rtmap {
+  /* Height of the hover readout box. See the .rt-readout rule. */
+  --rt-readout-h: 68px;
+  --rt-src: var(--acc-src);
+  --rt-tgt: #2c8f2c;
+  --rt-warn: #b3541e;
+}
+
+body.dark-mode .rtmap {
+  --rt-tgt: var(--acc-tgt);
+  --rt-warn: #e08a4c;
+}
+
+.rt-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-bottom: 12px;
+}
+
+.rt-pick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rt-btn {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: none;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color .12s ease, border-color .12s ease, background .12s ease;
+}
+
+.rt-btn i {
+  font-style: normal;
+  font-size: 10.5px;
+  opacity: 0.75;
+}
+
+.rt-btn:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-secondary);
+}
+
+.rt-btn.is-on {
+  color: var(--color-text);
+  border-color: var(--color-text);
+  /* An inset ring rather than a 2px border, so selecting one does not reflow
+     the row by a pixel. */
+  box-shadow: inset 0 0 0 1px var(--color-text);
+  background: var(--color-bg-alt);
+  font-weight: 600;
+}
+
+body.dark-mode .rt-btn.is-on {
+  background: #1a1a1c;
+}
+
+.rt-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.rt-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.rt-key b {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.rt-key i {
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.rt-key-src i { background: var(--rt-src); }
+.rt-key-tgt i { background: var(--rt-tgt); }
+
+/* The marks for the untransported number are the odd one out and never carry
+   identity on their own, so they get the neutral outline treatment rather than
+   a third hue. */
+.rt-key-raw i {
+  height: 9px;
+  border: 1.5px dashed var(--color-text-secondary);
+  background: none;
+  border-radius: 3px;
+}
+
+/* Below ~700px the three rows stop being legible at the page width, so the plot
+   scrolls inside its own box rather than shrinking the type with it. */
+.rt-plot {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.rt-svg {
+  display: block;
+  width: 100%;
+  min-width: 660px;
+  height: auto;
+  font-family: var(--font-primary);
+}
+
+/* --- the density rows --- */
+.rt-densfill {
+  fill: var(--rt-src);
+  fill-opacity: 0.16;
+  stroke: var(--rt-src);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.rt-dens.is-tgt .rt-densfill {
+  fill: var(--rt-tgt);
+  stroke: var(--rt-tgt);
+}
+
+.rt-densbase {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.rt-bandfill {
+  fill: var(--rt-src);
+  fill-opacity: 0.1;
+}
+
+.rt-dens.is-tgt .rt-bandfill {
+  fill: var(--rt-tgt);
+  fill-opacity: 0.14;
+}
+
+.rt-rawband {
+  fill: none;
+  stroke: var(--rt-warn);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+
+.rt-rowlab {
+  font-size: 12.5px;
+  font-weight: 600;
+  fill: var(--color-text);
+}
+
+/* These labels sit over the density areas, which are the busiest part of the
+   figure, so they carry a surface-coloured halo rather than being nudged into
+   whitespace that only exists for one of the four robots. */
+.rt-covlab, .rt-qlab, .rt-tlab, .rt-clab {
+  paint-order: stroke fill;
+  stroke: var(--color-card-bg);
+  stroke-width: 3.5px;
+  stroke-linejoin: round;
+}
+
+.rt-covlab {
+  font-size: 11.5px;
+  fill: var(--color-text-secondary);
+}
+
+.rt-covlab.is-raw { fill: var(--rt-warn); }
+.rt-covlab.is-tgt { fill: var(--rt-tgt); }
+
+/* --- the CDF panel --- */
+.rt-grid {
+  stroke: var(--color-border-light);
+  stroke-width: 1;
+}
+
+body.dark-mode .rt-grid {
+  stroke: var(--color-border);
+}
+
+.rt-curve {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.rt-curve.is-src { stroke: var(--rt-src); }
+.rt-curve.is-tgt { stroke: var(--rt-tgt); }
+
+.rt-clab {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.rt-clab.is-src { fill: var(--rt-src); }
+.rt-clab.is-tgt { fill: var(--rt-tgt); }
+
+.rt-sub {
+  font-size: 9px;
+  font-weight: 400;
+}
+
+.rt-ytick, .rt-xtick {
+  font-size: 11px;
+  fill: var(--color-text-secondary);
+}
+
+.rt-axtitle {
+  font-size: 11.5px;
+  fill: var(--color-text-secondary);
+}
+
+.rt-axline, .rt-xtickline {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1;
+}
+
+/* --- the transport glyph --- */
+.rt-drop {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.rt-move {
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 2;
+}
+
+.rt-arrow {
+  fill: var(--color-text);
+}
+
+.rt-dot {
+  stroke: var(--color-card-bg);
+  stroke-width: 2;
+}
+
+.rt-dot.is-src { fill: var(--rt-src); }
+.rt-dot.is-tgt { fill: var(--rt-tgt); }
+
+/* The number that was never transported: hollow, so it reads as a position the
+   figure is pointing at rather than a value it endorses. */
+.rt-dot.is-raw {
+  fill: var(--color-card-bg);
+  stroke: var(--rt-warn);
+  stroke-dasharray: 3 2.5;
+}
+
+.rt-qlab {
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  fill: var(--color-text);
+}
+
+.rt-tlab {
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.rt-tlab.is-src { fill: var(--rt-src); }
+.rt-tlab.is-tgt { fill: var(--rt-tgt); }
+
+.rt-hit {
+  fill: transparent;
+  cursor: default;
+}
+
+/* Probing one threshold steps the other one back, so the two paths of the
+   arms-low band can be read separately. */
+.rt-svg.is-probing .rt-th {
+  opacity: 0.28;
+}
+
+.rt-svg.is-probing .rt-th.is-probe {
+  opacity: 1;
+}
+
+/* Fixed for the same reason as .ue-readout: it is read under a moving pointer. */
+.rt-readout {
+  margin-top: 12px;
+  padding: 9px 12px;
+  height: var(--rt-readout-h);
+  overflow: auto;
+  border-radius: 8px;
+  background: var(--color-bg-alt);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+}
+
+body.dark-mode .rt-readout {
+  background: #1a1a1c;
+}
+
+.rt-readout strong, .rt-readout b {
+  color: var(--color-text);
+}
+
+.rt-warn {
+  color: var(--rt-warn);
+}
+
+/* Both breakpoints live here rather than with the index map's, because they set
+   a token on .rtmap and that rule is declared below -- same specificity, so an
+   earlier override would silently lose. */
+@media (max-width: 1160px) {
+  .rtmap {
+    --rt-readout-h: 108px;
+  }
+}
+
+@media (max-width: 700px) {
+  .rt-controls {
+    gap: 8px 14px;
+  }
+  .rtmap {
+    --rt-readout-h: 152px;
+  }
+}
+
+.rt-leader {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1;
+}
+
+/* ===== How It Works: three idea cards under the pipeline figure ===== */
+.contrib-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 32px;
+}
+
+.contrib {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-accent);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.contrib h4 {
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.35;
+  color: var(--color-text);
+  margin: 0 0 8px;
+}
+
+.contrib p {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--color-text);
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .contrib-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Prose that follows a figure needs the same breathing room as prose before one. */
+.fig + .section-body {
+  margin-top: 24px;
+}
+
+/* A block directly under a section heading needs no second divider. */
+.section-heading + .results-block {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}

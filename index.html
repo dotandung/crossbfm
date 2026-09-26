@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<!--
+  CrossBFM -- camera-ready page.
+
+  Derived from the light reading of the review page in
+  ~/Documents/Research/Web/CrossBFM (tools/make_simplified.py there), then
+  detached: this copy is now the source of truth. Edit it directly; do not
+  re-run that generator over it. See HANDOFF.md.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CrossBFM: Distilling a Shared Latent Behavior Space Across Humanoid Embodiments</title>
+  <meta name="description" content="CrossBFM distills a frozen Forward-Backward behavior latent from a source humanoid onto new embodiments, making one latent space - and one flow generator written over it - drive an entire fleet of humanoids.">
+  <link rel="stylesheet" href="style.css">
+  <script>if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark-mode-pending')</script>
+  <style>.dark-mode-pending body{background:#000;color:#f5f5f7}</style>
+</head>
+<body>
+  <nav class="nav-top">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-link nav-home">Home</a>
+      <a href="#abstract" class="nav-link">Abstract</a>
+      <a href="#summary" class="nav-link">Summary</a>
+      <a href="#method" class="nav-link">How It Works</a>
+      <a href="#results" class="nav-link">Results</a>
+      <a href="#demos" class="nav-link">Demos</a>
+      <a href="#authors" class="nav-link">Authors</a>
+      <a href="#bibtex" class="nav-link">BibTeX</a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <section id="hero" class="hero snap-section">
+    <div class="hero-inner">
+      <h1 class="hero-title" id="hero-title">
+        <span class="title-p1">CrossBFM</span>
+        <span class="title-p2-wrap"><span class="title-p2">Distilling a Shared Latent Behavior Space Across Humanoid Embodiments</span></span>
+      </h1>
+      <div class="hero-authors">
+        <span class="hero-author-line">
+          <a href="https://dotandung.github.io" target="_blank" rel="noopener">Tan-Dzung Do<sup>*</sup></a>,
+          <a href="https://tuandattt.github.io/" target="_blank" rel="noopener">Tuan Dat Phuong<sup>*</sup></a>,
+          <a href="https://www.ias.informatik.tu-darmstadt.de/Team/NicoBohlinger" target="_blank" rel="noopener">Nico Bohlinger</a>,
+          <a href="https://kookie14.github.io/kookie14/" target="_blank" rel="noopener">Cuc T. Trinh</a>,
+        </span>
+        <span class="hero-author-line">
+          <a href="https://www.ias.informatik.tu-darmstadt.de/Team/SiweiJu" target="_blank" rel="noopener">Siwei Ju</a>,
+          <a href="https://vienngo.github.io/" target="_blank" rel="noopener">Vien Anh Ngo</a>,
+          <a href="https://www.ias.informatik.tu-darmstadt.de/Member/JanPeters" target="_blank" rel="noopener">Jan Peters</a>,
+          <a href="https://sites.google.com/site/sitexinchaowang/" target="_blank" rel="noopener">Xinchao Wang<sup>&dagger;&#9993;</sup></a>,
+          <a href="https://anindex.github.io/" target="_blank" rel="noopener">An Thai Le<sup>&dagger;</sup></a>
+        </span>
+      </div>
+      <div class="hero-author-notes">
+        <span><sup>*</sup>Equal contribution</span>
+        <span><sup>&dagger;</sup>Equal advising</span>
+        <span><sup>&#9993;</sup>Corresponding author</span>
+      </div>
+      <div class="hero-venue">
+        <a>Under Review</a>
+      </div>
+
+      <div class="pub-links">
+        <a aria-disabled="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Paper
+        </a>
+        <a aria-disabled="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          arXiv
+        </a>
+        <a aria-disabled="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Code
+        </a>
+      </div>
+
+      <div class="hero-teaser-wrap">
+        <figure class="fig">
+          <div class="fig-frame">
+            <img src="assets/teaser.png" alt="CrossBFM teaser: one cross-embodiment latent behavior space at the centre, surrounded by four ways to prompt it - motion tracking, goal reaching, reward optimization, and flow-based latent generation - each executed by several different humanoids.">
+          </div>
+          <figcaption>
+            <strong>One latent can command every
+            robot, whether it's a motion to track, a goal to reach, a reward to
+            maximize, or a generated latent.</strong>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="abstract" class="content-section">
+    <div class="section-inner">
+      <h2 class="section-heading reveal">Abstract</h2>
+      <div class="section-body reveal speed-template-body">
+        <p>
+          Behavior Foundation Models (BFMs) give humanoids a promptable policy over a latent behavior
+          space, so that a single vector can specify a motion to imitate, a pose to reach, or a reward
+          to maximize. Forward&ndash;Backward representations produce such spaces, but at the cost of
+          hundreds of GPU-hours for a single robot &mdash; and a second robot repeating the procedure
+          arrives at a second space unrelated to the first. The result is embodiment-specific latents
+          that neither unify nor transfer under the same prompts.
+        </p>
+        <p>
+          We address this problem with <strong>CrossBFM</strong>, treating the latent space itself
+          as the transferable asset for various embodiments. As retargeting already puts every robot
+          in frame-level correspondence, transferring it becomes <em>supervised regression</em>, with
+          neither simulator nor training required on the target side. We propose a <em>unified
+          encoder architecture</em> for distilling behavior space from cross-embodiment
+          correspondence, which allows a single encoder with no robot-specific parameters to address
+          all training embodiments simultaneously in only under a GPU hour. Following this encoder,
+          latent-conditioned trackers turn the distilled latent into whole-body control in a
+          conventional PPO training manner in just 10 more GPU hours.
+        </p>
+        <p>
+          On three humanoids, all three prompting modes transfer: motion tracking with a
+          latent-conditioned policy losing only <strong>0.025&nbsp;rad</strong> to its
+          joint-conditioned counterpart, smooth goal reaching between poses with no falls, and reward
+          optimization for all <strong>41</strong> reward prompts. Regressing the encoder on a quarter
+          of the motion corpus costs only <strong>5%</strong> of tracking performance, and training
+          the encoder on a subset of robots and evaluating on an unseen one recovers up to
+          <strong>89%</strong> of the tracking performance of seen robots, demonstrating
+          cross-embodiment generalization to morphologically similar robots. We also verify the
+          pipeline on real robots across all three prompting modes and with flow-based generated
+          latents.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="summary" class="content-section">
+    <div class="section-inner">
+      <h2 class="section-heading reveal">Summary</h2>
+
+      <figure class="fig reveal summary-fig">
+        <div class="fig-frame real-frame">
+          <video class="real-video" controls playsinline preload="none"
+            poster="assets/summary/overview.jpg"
+            aria-label="CrossBFM overview video: the method, the three prompting modes, and simulated and real-robot results">
+            <source src="assets/summary/overview.mp4" type="video/mp4">
+            Your browser cannot play this video.
+            <a href="assets/summary/overview.mp4">Download it instead.</a>
+          </video>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="method" class="content-section">
+    <div class="section-inner">
+      <h2 class="section-heading reveal">How It Works</h2>
+      <div class="section-body reveal speed-template-body">
+        <p class="lede">
+          A BFM trained on the Unitree G1 is a structured, value-functional space that one
+          vector drawn from it can represent a motion, a goal or a reward for the latent-condition trackers. Rather than retrain a space for every new
+          robot which takes hundreds of GPU-hrs and ending up in totally unrelated spaces, we <strong>freeze the G1&rsquo;s space</strong> and teach other humanoids to use it.
+        </p>
+        <p>
+          <strong>Stage&nbsp;1</strong> leverages the cross-embodiment correspondences from retargeted data on the same timeline to train a unified encoder. This encoder converts robot X's proprioception into the G1's latent space, so that the same latent can prompt every robot to perform the same behavior.
+        </p>
+        <p>
+          <strong>Stage&nbsp;2</strong> trains a latent-conditioned policy for each robot. This policy observes the shared latent and its own proprioception, instead of joint commands. A flow-based model trained to generate latents from this distribution can then prompt any robot to perform a behavior such as &ldquo;walk&rdquo;, &ldquo;run&rdquo;, &ldquo;dance&rdquo;.
+        </p>
+      </div>
+
+      <figure class="fig reveal">
+        <div class="fig-frame">
+          <img src="assets/pipeline.png" alt="CrossBFM pipeline. Top: G1 retargeted motions pass through the frozen backward map to source latents, while the same motions retargeted to other robots pass through a unified cross-embodiment encoder reading padded and masked key-body, root and joint indices; an alignment loss ties each target latent to its source latent. Bottom left: a latent-conditioned policy trained with PPO in simulation. Bottom right: a flow-based latent motion generator conditioned on behaviors such as run, walk, dance and squat, deployed to the latent-conditioned policy.">
+        </div>
+      </figure>
+
+      <div class="contrib-grid reveal">
+        <article class="contrib">
+          <h4>Cross-embodiment correspondence with retargeting</h4>
+          <p>
+            Frame <em>t</em> of a retargeted clip is the same pose of the same behavior on every
+            robots. So the G1&rsquo;s latent for that frame is a ground-truth label for every other
+            robot, and transfer is a cosine regression, requiring no simulator, RL or discriminator for the new robot. Training this encoder is super fast (<1hr) compared to unsupervised RL.
+          </p>
+        </article>
+        <article class="contrib">
+          <h4>A unified encoder for all robots</h4>
+          <p>
+            Different humanoids may vary in both joint and link configuration. Our encoder use a robot-independent canonical input with 33 canonical joint
+            indices, 8 key-body indices and a root block &mdash. Link and joint mapping is processed by their functionality.
+          </p>
+        </article>
+        <article class="contrib">
+          <h4>Prompt with latents, not joint references</h4>
+          <p>
+            Each robot&rsquo;s policy observes behavior intent [<em>z</em>&nbsp;|&nbsp;proprio] rather than joint-space
+            trajectory. Because <em>z</em> lives in the G1&rsquo;s coordinates, all three BFM-Zero prompting
+            modes can transfer to new robots. Moreover, as the latent space is shared, a flow-based generator trained on the G1 can prompt any robot to perform a behavior such as &ldquo;walk&rdquo;, &ldquo;run&rdquo;, &ldquo;dance&rdquo;.
+          </p>
+        </article>
+      </div>
+
+      <!-- Stage 1 in two lines: Eq. 6 and Eq. 7 of the paper, in its own notation. -->
+      <div class="eq-pair reveal">
+        <div class="eq-item">
+          <div class="eq-block eq-fit">
+            <p class="eq">
+              <em>&#7825;</em><sub><em>t</em></sub> = proj<span class="rw-paren">(</span><em>E<sub>X</sub></em>(<em>o<sup>X</sup></em><sub><em>t&minus;T+1:t</em></sub>)<span class="rw-paren">)</span>,
+              <span class="eq-gap">proj(<em>v</em>) = &radic;<em>d</em>&thinsp;<em>v</em> / max(&#8214;<em>v</em>&#8214;, &epsilon;)</span>
+            </p>
+          </div>
+          <p class="eq-note">
+            <strong>Latent projection.</strong> The encoder takes a window of <em>T</em> proprioceptive
+            frames from one robot and returns a latent for every frame in it, rescaled to the sphere of
+            radius &radic;<em>d</em>.
+          </p>
+        </div>
+        <div class="eq-item">
+          <div class="eq-block eq-fit">
+            <p class="eq">
+              <em>&#8466;</em><sub>align</sub> =
+              <span class="eq-frac"><span>1</span><span><em>N</em></span></span>
+              &sum;<sub><em>t</em></sub>
+              <span class="rw-paren">(</span>1 &minus; cos<span class="rw-paren">(</span><em>&#7825;</em><sub><em>t</em></sub>, <em>z</em>&#8902;<sub><em>t</em></sub><span class="rw-paren">)</span><span class="rw-paren">)</span>
+            </p>
+          </div>
+          <p class="eq-note">
+            <strong>Encoder training objective.</strong> A frame-wise cosine regression onto the frozen
+            source latent <span class="mono"><em>z</em>&#8902;<sub><em>t</em></sub> = proj(<em>B<sub>S</sub></em>(<em>o</em><sup>G1</sup><sub><em>t</em></sub>))</span>,
+            averaged over the <em>N</em> frames. The cosine distance also serves as a proximity measure for
+            cross-embodiment representation on the pretrained latent space.
+          </p>
+        </div>
+      </div>
+
+      <div class="results-block reveal" id="unified-encoder">
+        <h3 class="results-subhead">The Unified Encoder Architecture</h3>
+        <div class="section-body">
+          <p>
+            We observe that Pre-LayerNorm helps prevent mode collapse. We also make the projection part of the training graph so that the encoder can learn to output latents that are already on the sphere, rather than relying on a post-processing step.
+          </p>
+        </div>
+
+        <figure class="fig encarch-fig">
+          <div class="encarch">
+            <div class="ea-strip" aria-label="the 163-dimensional canonical input">
+              <span class="ea-seg ea-kbpos">kb_pos</span>
+              <span class="ea-seg ea-kbvel">kb_vel</span>
+              <span class="ea-seg ea-mask">kb_mask</span>
+              <span class="ea-seg ea-root">root</span>
+              <span class="ea-seg ea-q">q</span>
+              <span class="ea-seg ea-qd">qd</span>
+              <span class="ea-seg ea-mask">j_mask</span>
+            </div>
+            <span class="ea-arrow" aria-hidden="true">&darr;</span>
+            <div class="ea-group">
+              <span class="ea-blk">Linear 163&times;256</span>
+              <span class="ea-plus">+</span>
+              <span class="ea-blk">Pos. Enc</span>
+            </div>
+            <span class="ea-arrow" aria-hidden="true">&darr;</span>
+            <div class="ea-row">
+              <span class="ea-blk ea-trunk">Pre-LN Transformer</span>
+              <span class="ea-mult">&times;4</span>
+            </div>
+            <span class="ea-arrow" aria-hidden="true">&darr;</span>
+            <span class="ea-blk ea-trunk">Linear 256&times;256</span>
+            <span class="ea-arrow" aria-hidden="true">&darr;</span>
+            <span class="ea-blk ea-trunk">Sphere Projection</span>
+            <span class="ea-arrow" aria-hidden="true">&darr;</span>
+            <span class="ea-blk ea-out"><em>z<sub>t</sub></em></span>
+          </div>
+        </figure>
+
+
+
+      </div>
+    </div>
+  </section>
+
+  <section id="results" class="content-section">
+    <div class="section-inner">
+      <h2 class="section-heading reveal">Results</h2>
+      <div class="section-body reveal speed-template-body">
+        <p>
+          We distill from a frozen G1 BFM onto three humanoids using LAFAN dataset. These robots differ from G1 in DoF count, body
+          count, joint topology and joint order.
+        </p>
+      </div>
+
+
+
+      <div class="results-block reveal">
+        <h3 class="results-subhead"><span class="results-kicker">01</span>Tracking &amp; Goal Reaching</h3>
+        <div class="section-body">
+          <p>
+            Each latent-conditioned policy is compared with a joint-conditioned one (TWIST2) trained on
+            the same data, environment, reward and PPO budget. The joint policy is the upper bound as
+            it has access to the exact joint angles at every step, while ours gets a latent behavior and have to infer the pose from it.
+          </p>
+        </div>
+        <figure class="fig fig-narrow chart-fig">
+          <div class="chart-card">
+            <div class="mae-legend">
+              <span class="mae-key"><i class="mae-sw mae-sw-latent"></i>Latent (ours)</span>
+              <span class="mae-key"><i class="mae-sw mae-sw-joint"></i>Joint (reference-fed)</span>
+            </div>
+            <svg class="barchart chart-wide" viewBox="0 0 880 400" role="img" aria-labelledby="mae-t mae-d" preserveAspectRatio="xMidYMid meet">
+              <title id="mae-t">Closed-loop joint MAE for the latent and reference-fed arms, and for goal reaching</title>
+              <desc id="mae-d">On M3, tracking MAE is 0.2024 rad with the latent arm and 0.1777 with the reference-fed joint arm, a gap of +0.0247; goal reaching, which the joint arm cannot do, is 0.2345. On T1, tracking MAE is 0.1901 rad with the latent arm and 0.1844 with the reference-fed joint arm, a gap of +0.0057; goal reaching, which the joint arm cannot do, is 0.1967. On N1, tracking MAE is 0.1391 rad with the latent arm and 0.1362 with the reference-fed joint arm, a gap of +0.0029; goal reaching, which the joint arm cannot do, is 0.1512.</desc>
+              <g class="grid">
+                <line x1="92" y1="284.0" x2="862" y2="284.0"/>
+                <line x1="92" y1="224.0" x2="862" y2="224.0"/>
+                <line x1="92" y1="164.0" x2="862" y2="164.0"/>
+                <line x1="92" y1="104.0" x2="862" y2="104.0"/>
+                <line x1="92" y1="44.0" x2="862" y2="44.0"/>
+                <line class="axis" x1="92" y1="344" x2="862" y2="344"/>
+              </g>
+              <g class="ytick">
+                <text x="78" y="288.0" text-anchor="end">5</text>
+                <text x="78" y="228.0" text-anchor="end">10</text>
+                <text x="78" y="168.0" text-anchor="end">15</text>
+                <text x="78" y="108.0" text-anchor="end">20</text>
+                <text x="78" y="48.0" text-anchor="end">25</text>
+              </g>
+              <text class="axis-title" transform="translate(30 194) rotate(-90)" text-anchor="middle">Joint MAE (&#215;100)</text>
+              <line class="split-rule" x1="567.0" y1="12" x2="567.0" y2="344"/>
+              <text class="band" x="322.0" y="26" text-anchor="middle">Tracking</text>
+              <text class="band" x="722.0" y="26" text-anchor="middle">Goal reaching</text>
+              <g class="bars">
+                <g class="bar mae-latent">
+                  <title>M3 latent: 0.2024 &#177; 0.0067 rad</title>
+                  <path d="M114.0 344 V105.1 A4 4 0 0 1 118.0 101.1 H162.0 A4 4 0 0 1 166.0 105.1 V344 Z"/>
+                  <path class="err" d="M133.0 109.2 H147.0 M140.0 109.2 V93.1 M133.0 93.1 H147.0"/>
+                  <text class="val" x="140.0" y="82.1" text-anchor="middle">20.24</text>
+                </g>
+                <g class="bar mae-joint">
+                  <title>M3 joint: 0.1777 &#177; 0.0033 rad</title>
+                  <path d="M174.0 344 V134.8 A4 4 0 0 1 178.0 130.8 H222.0 A4 4 0 0 1 226.0 134.8 V344 Z"/>
+                  <path class="err" d="M193.0 134.7 H207.0 M200.0 134.7 V126.8 M193.0 126.8 H207.0"/>
+                  <text class="val" x="200.0" y="115.8" text-anchor="middle">17.77</text>
+                </g>
+                <g class="bar mae-latent">
+                  <title>T1 latent: 0.1901 &#177; 0.0032 rad</title>
+                  <path d="M266.0 344 V119.9 A4 4 0 0 1 270.0 115.9 H314.0 A4 4 0 0 1 318.0 119.9 V344 Z"/>
+                  <path class="err" d="M285.0 119.7 H299.0 M292.0 119.7 V112.0 M285.0 112.0 H299.0"/>
+                  <text class="val" x="292.0" y="101.0" text-anchor="middle">19.01</text>
+                </g>
+                <g class="bar mae-joint">
+                  <title>T1 joint: 0.1844 &#177; 0.0043 rad</title>
+                  <path d="M326.0 344 V126.7 A4 4 0 0 1 330.0 122.7 H374.0 A4 4 0 0 1 378.0 126.7 V344 Z"/>
+                  <path class="err" d="M345.0 127.9 H359.0 M352.0 127.9 V117.6 M345.0 117.6 H359.0"/>
+                  <text class="val" x="352.0" y="106.6" text-anchor="middle">18.44</text>
+                </g>
+                <g class="bar mae-latent">
+                  <title>N1 latent: 0.1391 &#177; 0.0038 rad</title>
+                  <path d="M418.0 344 V181.1 A4 4 0 0 1 422.0 177.1 H466.0 A4 4 0 0 1 470.0 181.1 V344 Z"/>
+                  <path class="err" d="M437.0 181.6 H451.0 M444.0 181.6 V172.5 M437.0 172.5 H451.0"/>
+                  <text class="val" x="444.0" y="161.5" text-anchor="middle">13.91</text>
+                </g>
+                <g class="bar mae-joint">
+                  <title>N1 joint: 0.1362 &#177; 0.0032 rad</title>
+                  <path d="M478.0 344 V184.6 A4 4 0 0 1 482.0 180.6 H526.0 A4 4 0 0 1 530.0 184.6 V344 Z"/>
+                  <path class="err" d="M497.0 184.4 H511.0 M504.0 184.4 V176.7 M497.0 176.7 H511.0"/>
+                  <text class="val" x="504.0" y="165.7" text-anchor="middle">13.62</text>
+                </g>
+                <g class="bar mae-latent">
+                  <title>M3 goal: 0.2345 &#177; 0.0011 rad</title>
+                  <path d="M604.0 344 V66.6 A4 4 0 0 1 608.0 62.6 H652.0 A4 4 0 0 1 656.0 66.6 V344 Z"/>
+                  <path class="err" d="M623.0 63.9 H637.0 M630.0 63.9 V61.3 M623.0 61.3 H637.0"/>
+                  <text class="val" x="630.0" y="50.3" text-anchor="middle">23.45</text>
+                </g>
+                <g class="bar mae-latent">
+                  <title>T1 goal: 0.1967 &#177; 0.0012 rad</title>
+                  <path d="M696.0 344 V112.0 A4 4 0 0 1 700.0 108.0 H744.0 A4 4 0 0 1 748.0 112.0 V344 Z"/>
+                  <path class="err" d="M715.0 109.4 H729.0 M722.0 109.4 V106.5 M715.0 106.5 H729.0"/>
+                  <text class="val" x="722.0" y="95.5" text-anchor="middle">19.67</text>
+                </g>
+                <g class="bar mae-latent">
+                  <title>N1 goal: 0.1512 &#177; 0.0023 rad</title>
+                  <path d="M788.0 344 V166.6 A4 4 0 0 1 792.0 162.6 H836.0 A4 4 0 0 1 840.0 166.6 V344 Z"/>
+                  <path class="err" d="M807.0 165.3 H821.0 M814.0 165.3 V159.8 M807.0 159.8 H821.0"/>
+                  <text class="val" x="814.0" y="148.8" text-anchor="middle">15.12</text>
+                </g>
+              </g>
+              <g class="cats">
+                <text class="cat" x="170.0" y="368" text-anchor="middle">M3</text>
+                <text class="cat" x="322.0" y="368" text-anchor="middle">T1</text>
+                <text class="cat" x="474.0" y="368" text-anchor="middle">N1</text>
+                <text class="cat" x="630.0" y="368" text-anchor="middle">M3</text>
+                <text class="cat" x="722.0" y="368" text-anchor="middle">T1</text>
+                <text class="cat" x="814.0" y="368" text-anchor="middle">N1</text>
+              </g>
+            </svg>
+
+            <!-- Phone layout: the same nine values turned on their side, so each
+                 robot and its number read horizontally at full size and the whole
+                 chart fits the screen without a sideways scroll. Only one of the two
+                 is ever in the DOM's accessibility tree -- the other is display:none. -->
+            <svg class="barchart chart-narrow" viewBox="0 0 420 426" role="img" aria-labelledby="mae-t2 mae-d2" preserveAspectRatio="xMidYMid meet">
+              <title id="mae-t2">Closed-loop joint MAE for the latent and reference-fed arms, and for goal reaching</title>
+              <desc id="mae-d2">On M3, tracking MAE is 0.2024 rad with the latent arm and 0.1777 with the reference-fed joint arm, a gap of +0.0247; goal reaching, which the joint arm cannot do, is 0.2345. On T1, tracking MAE is 0.1901 rad with the latent arm and 0.1844 with the reference-fed joint arm, a gap of +0.0057; goal reaching, which the joint arm cannot do, is 0.1967. On N1, tracking MAE is 0.1391 rad with the latent arm and 0.1362 with the reference-fed joint arm, a gap of +0.0029; goal reaching, which the joint arm cannot do, is 0.1512.</desc>
+              <g class="grid">
+                <line x1="135.2" y1="24" x2="135.2" y2="386"/>
+                <line x1="196.4" y1="24" x2="196.4" y2="386"/>
+                <line x1="257.6" y1="24" x2="257.6" y2="386"/>
+                <line x1="318.8" y1="24" x2="318.8" y2="386"/>
+                <line x1="380.0" y1="24" x2="380.0" y2="386"/>
+                <line class="axis" x1="74" y1="24" x2="74" y2="386"/>
+              </g>
+              <g class="ytick">
+                <text x="135.2" y="404" text-anchor="middle">5</text>
+                <text x="196.4" y="404" text-anchor="middle">10</text>
+                <text x="257.6" y="404" text-anchor="middle">15</text>
+                <text x="318.8" y="404" text-anchor="middle">20</text>
+                <text x="380.0" y="404" text-anchor="middle">25</text>
+              </g>
+              <text class="axis-title" x="227" y="420" text-anchor="middle">Joint MAE (&#215;100)</text>
+              <line class="split-rule" x1="8" y1="248" x2="380" y2="248"/>
+              <text class="band" x="8" y="18">Tracking</text>
+              <text class="band" x="8" y="274">Goal reaching</text>
+              <g class="bars">
+                <g class="bar mae-latent">
+                  <title>M3 latent: 0.2024 &#177; 0.0067 rad</title>
+                  <path d="M74 34 H317.7 A4 4 0 0 1 321.7 38 V52 A4 4 0 0 1 317.7 56 H74 Z"/>
+                  <path class="err" d="M313.5 40.0 V50.0 M313.5 45.0 H329.9 M329.9 40.0 V50.0"/>
+                  <text class="val" x="338.9" y="50.0">20.24</text>
+                </g>
+                <g class="bar mae-joint">
+                  <title>M3 joint: 0.1777 &#177; 0.0033 rad</title>
+                  <path d="M74 62 H287.5 A4 4 0 0 1 291.5 66 V80 A4 4 0 0 1 287.5 84 H74 Z"/>
+                  <path class="err" d="M287.5 68.0 V78.0 M287.5 73.0 H295.5 M295.5 68.0 V78.0"/>
+                  <text class="val" x="304.5" y="78.0">17.77</text>
+                </g>
+                <g class="bar mae-latent">
+                  <title>T1 latent: 0.1901 &#177; 0.0032 rad</title>
+                  <path d="M74 108 H302.7 A4 4 0 0 1 306.7 112 V126 A4 4 0 0 1 302.7 130 H74 Z"/>
+                  <path class="err" d="M302.8 114.0 V124.0 M302.8 119.0 H310.6 M310.6 114.0 V124.0"/>
+                  <text class="val" x="319.6" y="124.0">19.01</text>
+                </g>
+                <g class="bar mae-joint">
+                  <title>T1 joint: 0.1844 &#177; 0.0043 rad</title>
+                  <path d="M74 136 H295.7 A4 4 0 0 1 299.7 140 V154 A4 4 0 0 1 295.7 158 H74 Z"/>
+                  <path class="err" d="M294.4 142.0 V152.0 M294.4 147.0 H305.0 M305.0 142.0 V152.0"/>
+                  <text class="val" x="314.0" y="152.0">18.44</text>
+                </g>
+                <g class="bar mae-latent">
+                  <title>N1 latent: 0.1391 &#177; 0.0038 rad</title>
+                  <path d="M74 182 H240.3 A4 4 0 0 1 244.3 186 V200 A4 4 0 0 1 240.3 204 H74 Z"/>
+                  <path class="err" d="M239.6 188.0 V198.0 M239.6 193.0 H248.9 M248.9 188.0 V198.0"/>
+                  <text class="val" x="257.9" y="198.0">13.91</text>
+                </g>
+                <g class="bar mae-joint">
+                  <title>N1 joint: 0.1362 &#177; 0.0032 rad</title>
+                  <path d="M74 210 H236.7 A4 4 0 0 1 240.7 214 V228 A4 4 0 0 1 236.7 232 H74 Z"/>
+                  <path class="err" d="M236.8 216.0 V226.0 M236.8 221.0 H244.6 M244.6 216.0 V226.0"/>
+                  <text class="val" x="253.6" y="226.0">13.62</text>
+                </g>
+                <g class="bar mae-latent">
+                  <title>M3 goal: 0.2345 &#177; 0.0011 rad</title>
+                  <path d="M74 284 H357.0 A4 4 0 0 1 361.0 288 V302 A4 4 0 0 1 357.0 306 H74 Z"/>
+                  <path class="err" d="M359.7 290.0 V300.0 M359.7 295.0 H362.4 M362.4 290.0 V300.0"/>
+                  <text class="val" x="371.4" y="300.0">23.45</text>
+                </g>
+                <g class="bar mae-latent">
+                  <title>T1 goal: 0.1967 &#177; 0.0012 rad</title>
+                  <path d="M74 322 H310.8 A4 4 0 0 1 314.8 326 V340 A4 4 0 0 1 310.8 344 H74 Z"/>
+                  <path class="err" d="M313.3 328.0 V338.0 M313.3 333.0 H316.2 M316.2 328.0 V338.0"/>
+                  <text class="val" x="325.2" y="338.0">19.67</text>
+                </g>
+                <g class="bar mae-latent">
+                  <title>N1 goal: 0.1512 &#177; 0.0023 rad</title>
+                  <path d="M74 360 H255.1 A4 4 0 0 1 259.1 364 V378 A4 4 0 0 1 255.1 382 H74 Z"/>
+                  <path class="err" d="M256.3 366.0 V376.0 M256.3 371.0 H261.9 M261.9 366.0 V376.0"/>
+                  <text class="val" x="270.9" y="376.0">15.12</text>
+                </g>
+              </g>
+              <g class="cats">
+                <text class="cat" x="66" y="64" text-anchor="end">M3</text>
+                <text class="cat" x="66" y="138" text-anchor="end">T1</text>
+                <text class="cat" x="66" y="212" text-anchor="end">N1</text>
+                <text class="cat" x="66" y="300" text-anchor="end">M3</text>
+                <text class="cat" x="66" y="338" text-anchor="end">T1</text>
+                <text class="cat" x="66" y="376" text-anchor="end">N1</text>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            Closed-loop joint MAE (&#215;100, lower is better), mean &#177; std over 3 seeds. Goal
+            reaching is reported for the latent policy only.
+          </figcaption>
+        </figure>
+        <div class="section-body">
+          <p>
+            The gap stays within <strong>0.025&nbsp;rad</strong> on all three robots (+0.025 on M3,
+            +0.006 on T1, +0.003 on N1), with no falls. For goal reaching, a sudden jump in joint
+            targets makes the joint policy spike its torques and fall, while interpolating in latent
+            space gives smooth pose-to-pose transitions for at most 0.032&nbsp;rad over tracking.
+          </p>
+        </div>
+      </div>
+
+      <div class="results-block reveal">
+        <h3 class="results-subhead"><span class="results-kicker">02</span>Reward Optimization</h3>
+        <div class="section-body">
+          <p>
+            Two of the three prompting modes immediately transfer after encoder training. Tracking is
+            <span class="mono">E<sub>X</sub></span> on a retargeted reference while goal reaching is
+            <span class="mono">E<sub>X</sub></span> on a predefined window ending at the goal pose.
+          </p>
+          <p>
+            Reward
+            optimization does not transfer directly, because the closed form that converts a reward
+            into a latent requires <strong>two components from the frozen source BFM</strong>:
+          </p>
+        </div>
+
+        <div class="eq-block eq-fit rw-eq">
+          <p class="eq">
+            <em>z</em><sub>rew</sub> = proj<span class="rw-paren">(</span> &sum;<sub><em>i</em></sub>
+            &omega;<sub><em>i</em></sub> <em>r</em><sub><em>i</em></sub>
+            <span class="rw-need"><span class="rw-badge">1</span><em>B<sub>S</sub></em>(<em>s<sub>i</sub></em>)</span>
+            <span class="rw-paren">)</span>,
+            <span class="rw-cond"><em>s<sub>i</sub></em> &sim;
+              <span class="rw-need"><span class="rw-badge">2</span>&rho;</span></span>
+          </p>
+        </div>
+
+        <div class="contrib-grid rw-grid">
+          <article class="contrib rw-card">
+            <h4><span class="rw-badge">1</span>The backward map <span class="mono">B<sub>S</sub></span></h4>
+            <p>
+              Directly substituted with the trained encoder <span class="mono">E<sub>X</sub></span>,
+              which was regressed onto <span class="mono">proj(B<sub>S</sub>(&middot;))</span> frame
+              by frame. <span class="rw-swap">B<sub>S</sub> &rarr; E<sub>X</sub></span>
+            </p>
+          </article>
+          <article class="contrib rw-card">
+            <h4><span class="rw-badge">2</span>The state distribution <span class="mono">&rho;</span></h4>
+            <p>
+              The visited states collected during RL training are not available on a target robot that
+              never ran unsupervised RL. We approximate <span class="mono">&rho;</span> using the
+              robot&rsquo;s own retargeted dataset, so the reward-weighted projection selects states
+              that are feasible for it. <span class="rw-swap">&rho; &rarr; cached retargets</span>
+            </p>
+          </article>
+        </div>
+
+        <figure class="fig rw-fig">
+          <p class="rw-graph-head">Reward optimization graph</p>
+          <div class="ue-net rw-net">
+            <span class="ue-net-step">
+              <b><em>Z<sub>i</sub></em> = <em>E<sub>X</sub></em>(<em>o<sup>X</sup></em><sub><em>i&minus;T+1:i</em></sub>)</b>
+              <i>encode once</i>
+            </span>
+            <span class="ue-net-arrow" aria-hidden="true">&rarr;</span>
+            <span class="ue-net-step">
+              <b><em>r<sub>i</sub></em> = <em>r</em>(&phi;(<em>o<sup>X</sup><sub>i</sub></em>); &theta;<sup>(<em>X</em>)</sup>)</b>
+              <i>score cached features</i>
+            </span>
+            <span class="ue-net-arrow" aria-hidden="true">&rarr;</span>
+            <span class="ue-net-step ue-net-out">
+              <b><em>z</em><sub>rew</sub> = proj( &sum;<sub><em>i</em></sub> &omega;<sub><em>i</em></sub> <em>r<sub>i</sub></em> <em>Z<sub>i</sub></em> )</b>
+              <i>project</i>
+            </span>
+          </div>
+          <figcaption>
+            The reward features <span class="mono">&phi;</span> are key-body kinematics only &mdash;
+            root height and velocity, uprightness, angular velocity, arm-tip and knee heights &mdash;
+            with the joint configuration discarded, so a reward written for one body can be scored on
+            another. The weights <span class="mono">&omega;&nbsp;=&nbsp;softmax(&tau;&thinsp;r<sub>1:M</sub>)</span>
+            take a reward-weighted average of all latent vectors over the <span class="mono">M</span>
+            cached frames of the retargeted dataset.
+          </figcaption>
+        </figure>
+
+
+
+        <div class="section-body">
+          <p>
+            We score all <strong>41</strong> reward prompts against using the G1&rsquo;s oracle latent optimized on G1 buffers.
+          </p>
+        </div>
+
+        <figure class="fig fig-narrow fig-table">
+          <div class="spd-table-wrap">
+            <table class="spd-table">
+              <caption class="sr-only">Mean normalized return over 41 source tasks, latent computed on the source versus on the target</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Robot</th>
+                  <th scope="col">Computed on G1</th>
+                  <th scope="col">Computed on target (ours)</th>
+                  <th scope="col">Gain</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>M3</td><td>0.145</td><td><strong>0.508</strong></td><td>3.50&times;</td></tr>
+                <tr><td>T1</td><td>0.228</td><td><strong>0.261</strong></td><td>1.14&times;</td></tr>
+                <tr><td>N1</td><td>0.177</td><td><strong>0.523</strong></td><td>2.95&times;</td></tr>
+                <tr class="tier ours"><td>Mean</td><td>0.183</td><td><strong>0.431</strong></td><td>2.35&times;</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-caption">
+            Normalized return in [0,&nbsp;1], averaged over the 41 source tasks. Higher is better.
+          </p>
+        </figure>
+
+        <div class="section-body">
+          <p>
+            Computing <span class="mono"><em>z</em><sub>rew</sub></span> on the source robot is
+            <strong>3.5&times;</strong> and <strong>3.0&times;</strong> worse on M3 and N1. The reason
+            is that the reward-weighted projection selects <em>which states are worth visiting</em>,
+            which depends on which states the executing body can actually reach. Thus a latent
+            optimal for the G1&rsquo;s reachable set is not optimal for other robots.
+          </p>
+        </div>
+      </div>
+
+      <div class="results-block reveal">
+        <h3 class="results-subhead"><span class="results-kicker">03</span>Unseen Motions</h3>
+        <div class="section-body">
+          <p>
+            Does the encoder work on clips it never saw? We evaluate how well the unified encoder
+            infers latent behavior across the training and validation motions by passing to the policy
+            either the G1&rsquo;s oracle latent <span class="mono"><em>z</em>&#8902;</span> or the
+            encoder&rsquo;s inference.
+          </p>
+        </div>
+
+        <figure class="fig fig-narrow fig-table">
+          <div class="spd-table-wrap">
+            <table class="spd-table">
+              <caption class="sr-only">Closed-loop key-body error for oracle versus inferred latents on training and validation motions</caption>
+              <thead>
+                <tr>
+                  <th scope="col" rowspan="2">Motions</th>
+                  <th scope="colgroup" colspan="2">M3</th>
+                  <th scope="colgroup" colspan="2">T1</th>
+                  <th scope="colgroup" colspan="2">N1</th>
+                </tr>
+                <tr>
+                  <th scope="col">oracle</th><th scope="col">pred.</th>
+                  <th scope="col">oracle</th><th scope="col">pred.</th>
+                  <th scope="col">oracle</th><th scope="col">pred.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Training (30)</td><td>8.14</td><td>8.02</td><td>5.70</td><td>5.43</td><td>5.58</td><td>5.57</td></tr>
+                <tr><td>Validation (10)</td><td>6.40</td><td>7.07</td><td>5.26</td><td>5.60</td><td>5.46</td><td>5.60</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-caption">
+            Closed-loop key-body error (cm, lower is better). Every episode runs full length with no falls.
+          </p>
+        </figure>
+
+        <div class="section-body">
+          <p>
+            On the encoder&rsquo;s training clips the predicted latent is marginally better than the
+            oracle. On validation motions it costs only 1.4&ndash;6.7&nbsp;mm of key-body error. In terms of geometrical alignment, distilled trajectories <em>overlay</em> the source trajectories
+            almost identically, behaviors form clear clusters, and the validation clips (dashed) fall
+            <em>inside</em> the cluster of their own behavior rather than off-manifold or in the gaps
+            between clusters. So the tracker trained on that region adapts to them well even with some cosine dissimilarity.
+          </p>
+        </div>
+
+        <figure class="fig latent-fig">
+          <div class="latent-map" id="latent-map">
+            <div class="latent-controls">
+              <div class="latent-group" id="latent-legend" role="group" aria-label="Filter by behavior"></div>
+              <span class="latent-divider" aria-hidden="true"></span>
+              <div class="latent-group" id="latent-srcs" role="group" aria-label="Filter by embodiment"></div>
+              <button class="latent-reset is-idle" id="latent-reset" type="button">Show all</button>
+            </div>
+            <div class="latent-panels" id="latent-panels"></div>
+            <div class="latent-keys">
+              <span class="lk"><svg width="26" height="8" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" class="key-ood"/></svg>validation LAFAN clip</span>
+              <span class="latent-hint">Click a behavior or an embodiment to show only those latents; hover a trajectory to follow that motion across all three fractions.</span>
+            </div>
+            <div class="latent-tip" id="latent-tip" role="status" aria-live="polite" hidden></div>
+            <noscript>
+              <img src="assets/tsne.png" alt="t-SNE projections of source (G1) and distilled (M3) latent trajectories at 100%, 25%, and 10% of the distillation corpus, coloured by behavior class.">
+            </noscript>
+          </div>
+          <figcaption>
+            Source (G1) and distilled (M3) latent trajectories, colored by behavior, with the encoder
+            trained on 100%, 25% and 10% of the corpus.
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="results-block reveal">
+        <h3 class="results-subhead"><span class="results-kicker">04</span>Data Scaling</h3>
+        <div class="section-body">
+          <p>
+            How much data does it take to distill the space? We shrink the encoder&rsquo;s corpus by
+            sampling 1.5&ndash;3&nbsp;s segments of every motion, so each behavior stays represented,
+            and feed its latents to a tracker trained on the full data.
+          </p>
+        </div>
+
+        <figure class="fig fig-narrow chart-fig">
+          <div class="chart-card">
+            <svg class="barchart chart-wide" viewBox="0 0 880 390" role="img" aria-labelledby="scaling-t scaling-d" preserveAspectRatio="xMidYMid meet">
+              <title id="scaling-t">Joint MAE on M3 against the fraction of the distillation corpus</title>
+              <desc id="scaling-d">Joint MAE (times 100) is 21.32 at 100 percent of the corpus, 22.07 at 75 percent, 22.18 at 50 percent, 22.41 at 25 percent, 27.06 at 10 percent, 29.99 at 5 percent, and 44.11 for the random-latent noise control.</desc>
+              <g class="grid">
+                <line x1="92" y1="282.8" x2="862" y2="282.8"/>
+                <line x1="92" y1="213.7" x2="862" y2="213.7"/>
+                <line x1="92" y1="144.5" x2="862" y2="144.5"/>
+                <line x1="92" y1="75.3" x2="862" y2="75.3"/>
+                <line class="axis" x1="92" y1="352" x2="862" y2="352"/>
+              </g>
+              <g class="ytick">
+                <text x="78" y="286.8" text-anchor="end">10</text>
+                <text x="78" y="217.7" text-anchor="end">20</text>
+                <text x="78" y="148.5" text-anchor="end">30</text>
+                <text x="78" y="79.3" text-anchor="end">40</text>
+              </g>
+              <text class="axis-title" transform="translate(30 186) rotate(-90)" text-anchor="middle">Joint MAE (&#215;100)</text>
+              <line class="control-rule" x1="752.0" y1="16" x2="752.0" y2="352"/>
+              <g class="bars">
+                <g class="bar b1">
+                  <title>100%: 21.32</title>
+                  <path d="M124.0 352 V208.5 A4 4 0 0 1 128.0 204.5 H166.0 A4 4 0 0 1 170.0 208.5 V352 Z"/>
+                  <text class="val" x="147.0" y="193.5" text-anchor="middle">21.32</text>
+                  <text class="cat" x="147.0" y="378" text-anchor="middle">100%</text>
+                </g>
+                <g class="bar b2">
+                  <title>75%: 22.07</title>
+                  <path d="M234.0 352 V203.3 A4 4 0 0 1 238.0 199.3 H276.0 A4 4 0 0 1 280.0 203.3 V352 Z"/>
+                  <text class="val" x="257.0" y="188.3" text-anchor="middle">22.07</text>
+                  <text class="cat" x="257.0" y="378" text-anchor="middle">75%</text>
+                </g>
+                <g class="bar b3">
+                  <title>50%: 22.18</title>
+                  <path d="M344.0 352 V202.6 A4 4 0 0 1 348.0 198.6 H386.0 A4 4 0 0 1 390.0 202.6 V352 Z"/>
+                  <text class="val" x="367.0" y="187.6" text-anchor="middle">22.18</text>
+                  <text class="cat" x="367.0" y="378" text-anchor="middle">50%</text>
+                </g>
+                <g class="bar b4">
+                  <title>25%: 22.41</title>
+                  <path d="M454.0 352 V201.0 A4 4 0 0 1 458.0 197.0 H496.0 A4 4 0 0 1 500.0 201.0 V352 Z"/>
+                  <text class="val" x="477.0" y="186.0" text-anchor="middle">22.41</text>
+                  <text class="cat" x="477.0" y="378" text-anchor="middle">25%</text>
+                </g>
+                <g class="bar b5">
+                  <title>10%: 27.06</title>
+                  <path d="M564.0 352 V168.8 A4 4 0 0 1 568.0 164.8 H606.0 A4 4 0 0 1 610.0 168.8 V352 Z"/>
+                  <text class="val" x="587.0" y="153.8" text-anchor="middle">27.06</text>
+                  <text class="cat" x="587.0" y="378" text-anchor="middle">10%</text>
+                </g>
+                <g class="bar b6">
+                  <title>5%: 29.99</title>
+                  <path d="M674.0 352 V148.6 A4 4 0 0 1 678.0 144.6 H716.0 A4 4 0 0 1 720.0 148.6 V352 Z"/>
+                  <text class="val" x="697.0" y="133.6" text-anchor="middle">29.99</text>
+                  <text class="cat" x="697.0" y="378" text-anchor="middle">5%</text>
+                </g>
+                <g class="bar b7">
+                  <title>Noise: 44.11</title>
+                  <path d="M784.0 352 V50.9 A4 4 0 0 1 788.0 46.9 H826.0 A4 4 0 0 1 830.0 50.9 V352 Z"/>
+                  <text class="val" x="807.0" y="35.9" text-anchor="middle">44.11</text>
+                  <text class="cat" x="807.0" y="378" text-anchor="middle">Noise</text>
+                </g>
+              </g>
+            </svg>
+
+            <!-- Phone layout: the same seven values turned on their side, so the
+                 fraction and its value read horizontally at full size and the whole
+                 chart fits the screen without a sideways scroll. Only one of the two
+                 is ever in the DOM's accessibility tree -- the other is display:none. -->
+            <svg class="barchart chart-narrow" viewBox="0 0 420 416" role="img" aria-labelledby="scaling-t2 scaling-d2" preserveAspectRatio="xMidYMid meet">
+              <title id="scaling-t2">Joint MAE on M3 against the fraction of the distillation corpus</title>
+              <desc id="scaling-d2">Joint MAE (times 100) is 21.32 at 100 percent of the corpus, 22.07 at 75 percent, 22.18 at 50 percent, 22.41 at 25 percent, 27.06 at 10 percent, 29.99 at 5 percent, and 44.11 for the random-latent noise control.</desc>
+              <g class="grid">
+                <line x1="124.7" y1="10" x2="124.7" y2="372"/>
+                <line x1="191.3" y1="10" x2="191.3" y2="372"/>
+                <line x1="258.0" y1="10" x2="258.0" y2="372"/>
+                <line x1="324.7" y1="10" x2="324.7" y2="372"/>
+                <line class="axis" x1="58" y1="10" x2="58" y2="372"/>
+              </g>
+              <g class="ytick">
+                <text x="58" y="390" text-anchor="middle">0</text>
+                <text x="124.7" y="390" text-anchor="middle">10</text>
+                <text x="191.3" y="390" text-anchor="middle">20</text>
+                <text x="258.0" y="390" text-anchor="middle">30</text>
+                <text x="324.7" y="390" text-anchor="middle">40</text>
+              </g>
+              <text class="axis-title" x="215" y="411" text-anchor="middle">Joint MAE (&#215;100)</text>
+              <line class="control-rule" x1="48" y1="320.3" x2="400" y2="320.3"/>
+              <g class="bars">
+                <g class="bar b1">
+                  <title>100%: 21.32</title>
+                  <path d="M58 24.9 H196.1 A4 4 0 0 1 200.1 28.9 V42.9 A4 4 0 0 1 196.1 46.9 H58 Z"/>
+                  <text class="cat" x="52" y="40.9" text-anchor="end">100%</text>
+                  <text class="val" x="207.1" y="40.9">21.32</text>
+                </g>
+                <g class="bar b2">
+                  <title>75%: 22.07</title>
+                  <path d="M58 76.6 H201.1 A4 4 0 0 1 205.1 80.6 V94.6 A4 4 0 0 1 201.1 98.6 H58 Z"/>
+                  <text class="cat" x="52" y="92.6" text-anchor="end">75%</text>
+                  <text class="val" x="212.1" y="92.6">22.07</text>
+                </g>
+                <g class="bar b3">
+                  <title>50%: 22.18</title>
+                  <path d="M58 128.3 H201.9 A4 4 0 0 1 205.9 132.3 V146.3 A4 4 0 0 1 201.9 150.3 H58 Z"/>
+                  <text class="cat" x="52" y="144.3" text-anchor="end">50%</text>
+                  <text class="val" x="212.9" y="144.3">22.18</text>
+                </g>
+                <g class="bar b4">
+                  <title>25%: 22.41</title>
+                  <path d="M58 180.0 H203.4 A4 4 0 0 1 207.4 184.0 V198.0 A4 4 0 0 1 203.4 202.0 H58 Z"/>
+                  <text class="cat" x="52" y="196.0" text-anchor="end">25%</text>
+                  <text class="val" x="214.4" y="196.0">22.41</text>
+                </g>
+                <g class="bar b5">
+                  <title>10%: 27.06</title>
+                  <path d="M58 231.7 H234.4 A4 4 0 0 1 238.4 235.7 V249.7 A4 4 0 0 1 234.4 253.7 H58 Z"/>
+                  <text class="cat" x="52" y="247.7" text-anchor="end">10%</text>
+                  <text class="val" x="245.4" y="247.7">27.06</text>
+                </g>
+                <g class="bar b6">
+                  <title>5%: 29.99</title>
+                  <path d="M58 283.4 H253.9 A4 4 0 0 1 257.9 287.4 V301.4 A4 4 0 0 1 253.9 305.4 H58 Z"/>
+                  <text class="cat" x="52" y="299.4" text-anchor="end">5%</text>
+                  <text class="val" x="264.9" y="299.4">29.99</text>
+                </g>
+                <g class="bar b7">
+                  <title>Noise: 44.11</title>
+                  <path d="M58 335.1 H348.1 A4 4 0 0 1 352.1 339.1 V353.1 A4 4 0 0 1 348.1 357.1 H58 Z"/>
+                  <text class="cat" x="52" y="351.1" text-anchor="end">Noise</text>
+                  <text class="val" x="359.1" y="351.1">44.11</text>
+                </g>
+              </g>
+            </svg>
+          </div>
+          <figcaption>
+            Joint MAE on M3 (&#215;100, lower is better) as the distillation corpus shrinks.
+            <em>Noise</em> is a random-latent control.
+          </figcaption>
+        </figure>
+
+        <div class="section-body">
+          <p>
+            A quarter of the corpus costs only <strong>5%</strong> (0.213 &rarr; 0.224&nbsp;rad); the
+            curve breaks only below that, at 0.271 for 10% and 0.300 for 5%. In the latent map above,
+            25% still overlays the source with behaviors separated, while at 10% the classes blur. We conlude that what
+            matters is behavioral <em>coverage</em>, not raw frame count.
+          </p>
+        </div>
+      </div>
+
+      <div class="results-block reveal">
+        <h3 class="results-subhead"><span class="results-kicker">05</span>Unseen Robots</h3>
+        <div class="section-body">
+          <p>
+            We report the generalizability of the unified encoder to unseen robots by training it on
+            two robots and evaluating on the third, with fixed pretrained trackers. <em>Signal gap
+            closed</em> is <span class="mono">(random&nbsp;&minus;&nbsp;pred)&thinsp;/&thinsp;(random&nbsp;&minus;&nbsp;oracle)</span>,
+            representing how meaningful the latent signal is to the tracker, with the upper bound
+            being the seen robot and the lower bound pure noise.
+          </p>
+        </div>
+
+        <figure class="fig fig-narrow fig-table">
+          <div class="spd-table-wrap">
+            <table class="spd-table">
+              <caption class="sr-only">Generalization of the unified encoder to unseen robots</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Unseen robot</th>
+                  <th scope="col">Cosine (unseen)</th>
+                  <th scope="col">Oracle MAE</th>
+                  <th scope="col">Predicted MAE</th>
+                  <th scope="col">Random MAE</th>
+                  <th scope="col">Signal gap closed</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>M3</td><td>0.625</td><td>0.165</td><td>0.183</td><td>0.337</td><td><strong>89.3%</strong></td></tr>
+                <tr><td>N1</td><td>0.586</td><td>0.137</td><td>0.224</td><td>0.332</td><td><strong>55.5%</strong></td></tr>
+                <tr><td>T1</td><td>0.253</td><td>0.168</td><td>0.289</td><td>0.306</td><td><strong>12.8%</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-caption">
+            Closed-loop joint MAE in radians. With all three robots in training, cosine is 0.83&ndash;0.87.
+          </p>
+        </figure>
+
+        <div class="section-body">
+          <p>
+            Transfer follows morphological proximity. M3 and N1 are a close pair, and each recovers
+            most of the gap when the other was seen while T1 has no close relative and recovers little.
+            Cosine alone undersells this insight. M3 at 0.625 looks broken yet tracks at 89% of the
+            oracle because the policy only needs the latent to land in the right behavior
+            region. We hypothesize that with many embodiments and every new robot has a close relative in the training set, transfer can be expected to generalize well in a zero-shot manner.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="demos" class="content-section">
+    <div class="section-inner">
+      <h2 class="section-heading reveal">Demos</h2>
+
+      <div class="results-block reveal">
+        <h3 class="results-subhead">In Simulation</h3>
+
+        <h4 class="results-subsubhead">Motion tracking &mdash; LAFAN clips encoded into the shared space</h4>
+        <figure class="fig demo-fig">
+          <div class="demo" id="demo-lafan" data-group="lafan_ghost">
+            <div class="demo-bar">
+              <div class="demo-motions" role="group" aria-label="Choose a motion"></div>
+              <button class="demo-play" type="button" aria-label="Pause">
+                <svg viewBox="0 0 16 16" aria-hidden="true" width="15" height="15">
+                  <rect class="ic-pause" x="3.5" y="2.5" width="3.4" height="11" rx="1"/>
+                  <rect class="ic-pause" x="9.1" y="2.5" width="3.4" height="11" rx="1"/>
+                  <path class="ic-play" d="M4 2.6 L13.2 8 L4 13.4 Z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="demo-stage"></div>
+            <div class="demo-foot">
+              <div class="demo-track" role="slider" tabindex="0"
+                aria-label="Position in the rollout" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <i class="demo-fill"></i>
+              </div>
+              <span class="demo-time">0.0s</span>
+            </div>
+          </div>
+        </figure>
+
+        <h4 class="results-subsubhead">Goal reaching &mdash; the encoder run on a window ending at the goal pose</h4>
+        <figure class="fig demo-fig">
+          <div class="demo" id="demo-goal" data-group="goal">
+            <div class="demo-bar">
+              <div class="demo-motions" role="group" aria-label="Choose a goal"></div>
+              <button class="demo-play" type="button" aria-label="Pause">
+                <svg viewBox="0 0 16 16" aria-hidden="true" width="15" height="15">
+                  <rect class="ic-pause" x="3.5" y="2.5" width="3.4" height="11" rx="1"/>
+                  <rect class="ic-pause" x="9.1" y="2.5" width="3.4" height="11" rx="1"/>
+                  <path class="ic-play" d="M4 2.6 L13.2 8 L4 13.4 Z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="demo-stage"></div>
+            <div class="demo-foot">
+              <div class="demo-track" role="slider" tabindex="0"
+                aria-label="Position in the rollout" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <i class="demo-fill"></i>
+              </div>
+              <span class="demo-time">0.0s</span>
+            </div>
+          </div>
+        </figure>
+
+        <h4 class="results-subsubhead">Reward optimization &mdash; latents inferred on each robot from a reward</h4>
+        <figure class="fig demo-fig">
+          <div class="demo" id="demo-reward" data-group="reward_motions">
+            <div class="demo-bar">
+              <div class="demo-motions" role="group" aria-label="Choose a task"></div>
+              <button class="demo-play" type="button" aria-label="Pause">
+                <svg viewBox="0 0 16 16" aria-hidden="true" width="15" height="15">
+                  <rect class="ic-pause" x="3.5" y="2.5" width="3.4" height="11" rx="1"/>
+                  <rect class="ic-pause" x="9.1" y="2.5" width="3.4" height="11" rx="1"/>
+                  <path class="ic-play" d="M4 2.6 L13.2 8 L4 13.4 Z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="demo-stage"></div>
+            <div class="demo-foot">
+              <div class="demo-track" role="slider" tabindex="0"
+                aria-label="Position in the rollout" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <i class="demo-fill"></i>
+              </div>
+              <span class="demo-time">0.0s</span>
+            </div>
+          </div>
+        </figure>
+
+        <h4 class="results-subsubhead">Flow prompting &mdash; latents generated from a behavior label</h4>
+        <figure class="fig demo-fig">
+          <div class="demo" id="demo-gen" data-group="gen_motions">
+            <div class="demo-bar">
+              <div class="demo-motions" role="group" aria-label="Choose a motion"></div>
+              <button class="demo-play" type="button" aria-label="Pause">
+                <svg viewBox="0 0 16 16" aria-hidden="true" width="15" height="15">
+                  <rect class="ic-pause" x="3.5" y="2.5" width="3.4" height="11" rx="1"/>
+                  <rect class="ic-pause" x="9.1" y="2.5" width="3.4" height="11" rx="1"/>
+                  <path class="ic-play" d="M4 2.6 L13.2 8 L4 13.4 Z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="demo-stage"></div>
+            <div class="demo-foot">
+              <div class="demo-track" role="slider" tabindex="0"
+                aria-label="Position in the rollout" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <i class="demo-fill"></i>
+              </div>
+              <span class="demo-time">0.0s</span>
+            </div>
+          </div>
+        </figure>
+      </div>
+
+      <div class="results-block reveal">
+        <h3 class="results-subhead">On a Real Robot</h3>
+
+        <h4 class="results-subsubhead">Goal reaching &mdash; interpolating between goal latents</h4>
+        <figure class="fig real-fig">
+          <div class="fig-frame real-frame">
+            <video class="real-video" controls muted loop playsinline preload="none"
+              poster="assets/real_demo/goal_tracking.jpg"
+              aria-label="The M3 humanoid on a gantry moving through a sequence of goal poses, driven by latent prompts">
+              <source src="assets/real_demo/goal_tracking.mp4" type="video/mp4">
+              Your browser cannot play this video.
+              <a href="assets/real_demo/goal_tracking.mp4">Download it instead.</a>
+            </video>
+          </div>
+          <figcaption>M3 &mdash; 9 goal poses.</figcaption>
+        </figure>
+
+        <figure class="fig real-fig">
+          <div class="fig-frame real-frame">
+            <video class="real-video" controls muted loop playsinline preload="none"
+              poster="assets/real_demo/goal_t1.jpg"
+              aria-label="The Booster T1 humanoid on a gantry moving through a sequence of goal poses, driven by latent prompts">
+              <source src="assets/real_demo/goal_t1.mp4" type="video/mp4">
+              Your browser cannot play this video.
+              <a href="assets/real_demo/goal_t1.mp4">Download it instead.</a>
+            </video>
+          </div>
+          <figcaption>T1 &mdash; the same prompting mode on a second robot.</figcaption>
+        </figure>
+
+        <h4 class="results-subsubhead">Motion tracking &mdash; a LAFAN dance as a latent trajectory</h4>
+        <figure class="fig real-fig">
+          <div class="fig-frame real-frame">
+            <video class="real-video" controls muted loop playsinline preload="none"
+              poster="assets/real_demo/dance_lafan_2.jpg"
+              aria-label="A humanoid robot performing a dance motion encoded from a LAFAN reference clip">
+              <source src="assets/real_demo/dance_lafan_2.mp4" type="video/mp4">
+              Your browser cannot play this video.
+              <a href="assets/real_demo/dance_lafan_2.mp4">Download it instead.</a>
+            </video>
+          </div>
+        </figure>
+
+        <h4 class="results-subsubhead">Flow prompting &mdash; a dance generated in latent space</h4>
+        <figure class="fig real-fig">
+          <div class="fig-frame real-frame">
+            <video class="real-video" controls muted loop playsinline preload="none"
+              poster="assets/real_demo/gen_dance.jpg"
+              aria-label="A humanoid robot performing a dance motion sampled from the flow generator">
+              <source src="assets/real_demo/gen_dance.mp4" type="video/mp4">
+              Your browser cannot play this video.
+              <a href="assets/real_demo/gen_dance.mp4">Download it instead.</a>
+            </video>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="authors" class="content-section">
+    <div class="section-inner">
+      <h2 class="section-heading reveal">Authors</h2>
+      <div class="reveal">
+        <div class="author-grid">
+          <div class="author-row">
+            <a class="author-card" href="https://dotandung.github.io" target="_blank" rel="noopener">
+              <img src="assets/authors/do.jpg" alt="Tan-Dzung Do" width="256" height="256" loading="lazy">
+              <span class="author-name">Tan-Dzung Do<sup>1*</sup></span>
+            </a>
+            <a class="author-card" href="https://tuandattt.github.io/" target="_blank" rel="noopener">
+              <img src="assets/authors/phuong.jpg" alt="Tuan Dat Phuong" width="256" height="256" loading="lazy">
+              <span class="author-name">Tuan Dat Phuong<sup>2*</sup></span>
+            </a>
+            <a class="author-card" href="https://www.ias.informatik.tu-darmstadt.de/Team/NicoBohlinger" target="_blank" rel="noopener">
+              <img src="assets/authors/bohlinger.jpg" alt="Nico Bohlinger" width="256" height="256" loading="lazy">
+              <span class="author-name">Nico Bohlinger<sup>3</sup></span>
+            </a>
+            <a class="author-card" href="https://kookie14.github.io/kookie14/" target="_blank" rel="noopener">
+              <img src="assets/authors/trinh.jpg" alt="Cuc T. Trinh" width="256" height="256" loading="lazy">
+              <span class="author-name">Cuc T. Trinh<sup>1</sup></span>
+            </a>
+          </div>
+          <div class="author-row">
+            <a class="author-card" href="https://www.ias.informatik.tu-darmstadt.de/Team/SiweiJu" target="_blank" rel="noopener">
+              <img src="assets/authors/ju.jpg" alt="Siwei Ju" width="256" height="256" loading="lazy">
+              <span class="author-name">Siwei Ju<sup>3</sup></span>
+            </a>
+            <a class="author-card" href="https://vienngo.github.io/" target="_blank" rel="noopener">
+              <img src="assets/authors/ngo.jpeg" alt="Vien Anh Ngo" width="256" height="256" loading="lazy">
+              <span class="author-name">Vien Anh Ngo<sup>1,4</sup></span>
+            </a>
+            <a class="author-card" href="https://www.ias.informatik.tu-darmstadt.de/Member/JanPeters" target="_blank" rel="noopener">
+              <img src="assets/authors/peters.jpg" alt="Jan Peters" width="256" height="256" loading="lazy">
+              <span class="author-name">Jan Peters<sup>3,5,6</sup></span>
+            </a>
+            <a class="author-card" href="https://sites.google.com/site/sitexinchaowang/" target="_blank" rel="noopener">
+              <img src="assets/authors/wang.jpg" alt="Xinchao Wang" width="256" height="256" loading="lazy">
+              <span class="author-name">Xinchao Wang<sup>2&dagger;&#9993;</sup></span>
+            </a>
+            <a class="author-card" href="https://anindex.github.io/" target="_blank" rel="noopener">
+              <img src="assets/authors/le.jpg" alt="An Thai Le" width="256" height="256" loading="lazy">
+              <span class="author-name">An Thai Le<sup>1,3,4&dagger;</sup></span>
+            </a>
+          </div>
+        </div>
+        <div class="author-affiliations">
+          <span><sup>1</sup>VinRobotics</span>
+          <span><sup>2</sup>National University of Singapore</span>
+          <span><sup>3</sup>TU Darmstadt</span>
+          <span><sup>4</sup>VinUniversity</span>
+          <span><sup>5</sup>DFKI</span>
+          <span><sup>6</sup>Hessian AI</span>
+        </div>
+        <div class="author-affiliations author-notes">
+          <span><sup>*</sup>Equal contribution</span>
+          <span><sup>&dagger;</sup>Equal advising</span>
+          <span><sup>&#9993;</sup>Corresponding author</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="bibtex" class="content-section">
+    <div class="section-inner">
+      <h2 class="section-heading reveal">BibTeX</h2>
+      <div class="reveal">
+        <pre class="bibtex-block"><code>@inproceedings{crossbfm2026,
+  title     = {CrossBFM: Distilling a Shared Latent Behavior Space
+               Across Humanoid Embodiments},
+  author    = {Do, Tan-Dzung and Phuong, Tuan Dat and Bohlinger, Nico and
+               Trinh, Cuc T. and Ju, Siwei and Ngo, Vien Anh and
+               Peters, Jan and Wang, Xinchao and Le, An Thai},
+  booktitle = {Under Review},
+  year      = {2026}
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>Website created using the template <a href="https://github.com/howardhx/website_template/" target="_blank" rel="noopener">here</a>.</p>
+  </footer>
+
+  <script src="assets/demo/manifest.js"></script>
+  <script src="assets/latent_map.js"></script>
+  <script>
+    const toggle = document.getElementById('theme-toggle');
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+    }
+
+    toggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    });
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', event => {
+        event.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    const nav = document.querySelector('.nav-top');
+    const navLinks = Array.from(document.querySelectorAll('.nav-link[href^="#"]'));
+    const sections = navLinks
+      .map(link => document.querySelector(link.getAttribute('href')))
+      .filter(Boolean);
+
+    function updateNav() {
+      nav.classList.toggle('scrolled', window.scrollY > 100);
+      let current = sections[0];
+      for (const section of sections) {
+        if (section.offsetTop <= window.scrollY + 120) current = section;
+      }
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${current.id}`);
+      });
+    }
+
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('revealed');
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(element => revealObserver.observe(element));
+
+
+    // ----- Rollout demos -----------------------------------------------------
+    // Both demos are the same component over assets/demo/manifest.js, which the
+    // encoder regenerates, so a newly rendered motion or robot needs no edit here.
+    //
+    // All three embodiments play at once, side by side, off one shared timeline:
+    // the clips of a motion are cut to the same frames and framed by one crop, so
+    // any column that fell out of step would read as a difference in behavior
+    // rather than a playback artefact. The first clip is the timing master.
+    (function () {
+      const data = window.DEMO_CLIPS;
+      if (!data) return;
+      document.querySelectorAll('.demo[data-group]').forEach(root => {
+        const group = data[root.dataset.group];
+        if (group && group.motions && group.motions.length) init(root, group);
+        else root.hidden = true;      // nothing rendered for this group yet
+      });
+
+      function init(root, group) {
+        const motionsEl = root.querySelector('.demo-motions');
+        const playBtn = root.querySelector('.demo-play');
+        const stage = root.querySelector('.demo-stage');
+        const track = root.querySelector('.demo-track');
+        const fill = root.querySelector('.demo-fill');
+        const timeEl = root.querySelector('.demo-time');
+
+        let vids = [], master = null, playing = true, lastT = 0;
+
+        // Nothing is fetched until the figure comes near the viewport; three clips
+        // load per demo, and both demos sit far enough down the page that fetching
+        // that up front is waste. Once armed, a motion change loads straight away.
+        //
+        // A plain rect test rather than IntersectionObserver: the failure mode of
+        // an observer that never fires is a permanently blank figure, and this
+        // trigger can actually be exercised in a test.
+        let armed = false;
+        function near() {
+          const r = root.getBoundingClientRect();
+          const h = window.innerHeight || document.documentElement.clientHeight;
+          return r.top < h + 400 && r.bottom > -400;
+        }
+        function maybeArm() {
+          if (armed || !near()) return;
+          armed = true;
+          window.removeEventListener('scroll', maybeArm);
+          window.removeEventListener('resize', maybeArm);
+          attach();
+        }
+        function watch() {
+          window.addEventListener('scroll', maybeArm, { passive: true });
+          window.addEventListener('resize', maybeArm);
+          maybeArm();
+        }
+
+        if (group.motions.length > 1) {
+          group.motions.forEach((m, i) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'demo-motion';
+            b.textContent = m.label;
+            b.setAttribute('aria-pressed', String(i === 0));
+            b.addEventListener('click', () => {
+              if (b.getAttribute('aria-pressed') === 'true') return;
+              Array.from(motionsEl.children).forEach(o =>
+                o.setAttribute('aria-pressed', String(o === b)));
+              load(m);
+            });
+            motionsEl.appendChild(b);
+          });
+        } else {
+          motionsEl.hidden = true;
+        }
+
+        function load(motion) {
+          stage.textContent = '';
+          vids = motion.clips.map(c => {
+            const cell = document.createElement('div');
+            cell.className = 'demo-cell';
+
+            const v = document.createElement('video');
+            v.className = 'demo-vid';
+            v.muted = true;
+            v.loop = true;
+            v.playsInline = true;
+            v.preload = 'auto';
+            v.poster = c.poster;
+            v.dataset.src = c.src;                 // held back until near the viewport
+            v.setAttribute('aria-label', c.robot + ' ' + motion.label + ' rollout');
+            cell.appendChild(v);
+
+            // A borrowed clip is named on its own tile; an unlabelled stand-in
+            // would claim a result for a body that has not been rendered.
+            const cap = document.createElement('span');
+            cap.className = 'demo-cap' + (c.placeholder ? ' is-placeholder' : '');
+            cap.textContent = c.placeholder
+              ? c.robot + ' · ' + c.placeholder + '’s clip'
+              : c.robot;
+            if (c.placeholder) {
+              cap.title = c.robot + '’s render is still pending, so '
+                + c.placeholder + '’s clip stands in for it.';
+            }
+            cell.appendChild(cap);
+
+            stage.appendChild(cell);
+            return v;
+          });
+          master = vids[0];
+          lastT = 0;
+
+          if (armed) attach();
+          else watch();
+        }
+
+        // Give the clips their sources and bring the set up together.
+        function attach() {
+          vids.forEach(v => {
+            if (!v.getAttribute('src') && v.dataset.src) v.setAttribute('src', v.dataset.src);
+          });
+
+          // Start locked at zero rather than wherever each clip happened to begin
+          // buffering, which is otherwise a frame or two apart -- and side by side
+          // that offset is plainly visible.
+          let metaSeen = 0;
+          vids.forEach(v => {
+            const onMeta = () => {
+              if (++metaSeen < vids.length) return;
+              vids.forEach(o => { if (o.currentTime > 0.01) o.currentTime = 0; });
+              setPlaying(playing);
+            };
+            if (v.readyState >= 1) onMeta();
+            else v.addEventListener('loadedmetadata', onMeta, { once: true });
+          });
+        }
+
+        function setPlaying(on) {
+          playing = on;
+          vids.forEach(v => { on ? v.play().catch(() => {}) : v.pause(); });
+          root.classList.toggle('is-paused', !on);
+          playBtn.setAttribute('aria-label', on ? 'Pause' : 'Play');
+        }
+        playBtn.addEventListener('click', () => setPlaying(!!master && master.paused));
+
+        // Seeking moves every clip, so the columns stay comparable afterwards.
+        function seekTo(frac) {
+          const d = master && master.duration;
+          if (!d || !isFinite(d)) return;
+          const t = Math.max(0, Math.min(1, frac)) * d;
+          vids.forEach(v => { v.currentTime = t; });
+        }
+        track.addEventListener('click', e => {
+          const r = track.getBoundingClientRect();
+          seekTo((e.clientX - r.left) / r.width);
+        });
+        track.addEventListener('keydown', e => {
+          const step = e.key === 'ArrowLeft' ? -0.05 : e.key === 'ArrowRight' ? 0.05 : 0;
+          if (!step || !master || !master.duration) return;
+          e.preventDefault();
+          seekTo(master.currentTime / master.duration + step);
+        });
+
+        // rAF rather than timeupdate, which fires about four times a second and
+        // would step the bar visibly on clips this short.
+        //
+        // Independently looping videos do not wrap on the same tick, so without
+        // this the columns drift a little further apart on every lap. Catching the
+        // wrap on the master and pulling the rest back to it returns them all to
+        // zero together and caps the error at a single loop.
+        (function tick() {
+          const d = master && master.duration;
+          if (d && isFinite(d)) {
+            const t = master.currentTime;
+            if (t < lastT - 0.05) {
+              vids.forEach(v => { if (v !== master) v.currentTime = t; });
+            }
+            lastT = t;
+            const pct = (t / d) * 100;
+            fill.style.width = pct + '%';
+            track.setAttribute('aria-valuenow', Math.round(pct));
+            timeEl.textContent = t.toFixed(1) + 's';
+          }
+          requestAnimationFrame(tick);
+        })();
+
+        load(group.motions[0]);
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) setPlaying(false);
+        root.classList.add('is-ready');
+      }
+    })();
+
+
+    // ----- Interactive latent map -------------------------------------------
+    // Draws the exported t-SNE panels as SVG polylines. Hovering a trajectory
+    // names its motion and highlights the same clip in every panel; clicking a
+    // behavior or an embodiment filters the map down to those latents.
+    (function () {
+      const data = window.LATENT_MAP;
+      const host = document.getElementById('latent-map');
+      if (!data || !host) return;
+
+      const panelsEl = document.getElementById('latent-panels');
+      const legendEl = document.getElementById('latent-legend');
+      const srcsEl = document.getElementById('latent-srcs');
+      const resetEl = document.getElementById('latent-reset');
+      const tip = document.getElementById('latent-tip');
+      const NS = 'http://www.w3.org/2000/svg';
+      const el = (name, attrs) => {
+        const n = document.createElementNS(NS, name);
+        for (const k in attrs) n.setAttribute(k, attrs[k]);
+        return n;
+      };
+
+      // Same shading as the paper figure: the source runs deep, the distilled light.
+      function shade(hex, amount) {
+        const v = parseInt(hex.slice(1), 16);
+        let [r, g, b] = [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+        if (amount >= 0) {
+          const f = 1 - amount;
+          [r, g, b] = [r * f, g * f, b * f];
+        } else {
+          const f = -amount;
+          [r, g, b] = [r + (255 - r) * f, g + (255 - g) * f, b + (255 - b) * f];
+        }
+        return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+      }
+
+      const path = pts => pts.map((p, i) => `${i ? 'L' : 'M'}${p[0]} ${-p[1]}`).join('');
+
+      // Convex hull (monotone chain), expanded from the centroid — the dashed
+      // outline the figure draws around each validation clip.
+      function hull(pts) {
+        const p = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+        if (p.length < 3) return null;
+        const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+        const build = src => {
+          const out = [];
+          for (const q of src) {
+            while (out.length >= 2 && cross(out[out.length - 2], out[out.length - 1], q) <= 0) out.pop();
+            out.push(q);
+          }
+          out.pop();
+          return out;
+        };
+        const h = build(p).concat(build(p.slice().reverse()));
+        const c = h.reduce((a, q) => [a[0] + q[0] / h.length, a[1] + q[1] / h.length], [0, 0]);
+        return h.map(q => [c[0] + (q[0] - c[0]) * 1.12, c[1] + (q[1] - c[1]) * 1.12]);
+      }
+
+      const behaviors = [];
+      data.panels.forEach(panel => {
+        const wrap = document.createElement('figure');
+        wrap.className = 'latent-panel';
+
+        const svg = el('svg', {
+          viewBox: '-1.32 -1.32 2.64 2.64',
+          class: 'latent-svg',
+          role: 'img',
+          'aria-label': `Latent trajectories at ${panel.label} of the distillation corpus`,
+        });
+        svg.appendChild(el('circle', { cx: 0, cy: 0, r: 1.16, class: 'latent-frame' }));
+
+        const byMotion = {};
+        panel.traces.forEach(t => {
+          if (behaviors.indexOf(t.cat) < 0) behaviors.push(t.cat);
+          (byMotion[t.m] = byMotion[t.m] || []).push(t);
+        });
+
+        Object.keys(byMotion).forEach(m => {
+          const traces = byMotion[m];
+          if (traces[0].ood) {
+            const h = hull([].concat(...traces.map(t => t.p)));
+            if (h) svg.appendChild(el('path', {
+              d: path(h) + 'Z', class: 'latent-hull', 'data-m': m, 'data-cat': traces[0].cat,
+            }));
+          }
+          const g = el('g', { class: 'latent-motion', 'data-m': m, 'data-cat': traces[0].cat });
+          const title = el('title');
+          title.textContent = `${m} — ${traces[0].cat}${traces[0].ood ? ' (validation)' : ''}`;
+          g.appendChild(title);
+          traces.forEach(t => {
+            g.appendChild(el('path', {
+              d: path(t.p),
+              class: `latent-trace src-${t.src}`,
+              'data-cat': t.cat,
+              'data-src': t.src,
+              stroke: shade(data.colors[t.cat], t.src === 'g1' ? 0.45 : -0.25),
+            }));
+          });
+          // A fat transparent copy on top: the hit target, so 1px curves are hoverable.
+          traces.forEach(t => g.appendChild(el('path', {
+            d: path(t.p), class: 'latent-hit', 'data-cat': t.cat, 'data-src': t.src,
+          })));
+          g.addEventListener('pointerenter', () => select(m, traces[0]));
+          g.addEventListener('pointermove', moveTip);
+          g.addEventListener('pointerleave', clear);
+          svg.appendChild(g);
+        });
+
+        const cap = document.createElement('figcaption');
+        cap.textContent = panel.label;
+        wrap.appendChild(cap);
+        wrap.appendChild(svg);
+        panelsEl.appendChild(wrap);
+      });
+
+      // ----- filters: behavior + embodiment, both multi-select -----------------
+      const cats = new Set(behaviors);
+      const srcs = new Set(['g1', 'target']);
+      const chips = [];
+
+      function chip(parent, kind, key, label, swatch) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'latent-chip';
+        b.dataset.kind = kind;
+        b.dataset.key = key;
+        b.setAttribute('aria-pressed', 'true');
+        b.innerHTML = swatch + `<span>${label}</span>`;
+        b.addEventListener('click', () => {
+          const set = kind === 'cat' ? cats : srcs;
+          if (set.has(key)) set.delete(key); else set.add(key);
+          apply();
+        });
+        parent.appendChild(b);
+        chips.push(b);
+        return b;
+      }
+
+      behaviors.forEach(cat => {
+        chip(legendEl, 'cat', cat, cat, `<i style="background:${data.colors[cat]}"></i>`);
+      });
+      chip(srcsEl, 'src', 'g1', `${data.source} (source)`, '<i class="sw-src"></i>');
+      chip(srcsEl, 'src', 'target', `${data.robot} (distilled)`, '<i class="sw-tgt"></i>');
+
+      resetEl.addEventListener('click', () => {
+        behaviors.forEach(c => cats.add(c));
+        srcs.add('g1');
+        srcs.add('target');
+        apply();
+      });
+
+      function apply() {
+        host.querySelectorAll('.latent-trace, .latent-hit').forEach(p => {
+          p.classList.toggle('is-off', !(cats.has(p.dataset.cat) && srcs.has(p.dataset.src)));
+        });
+        host.querySelectorAll('.latent-motion').forEach(g => {
+          g.classList.toggle('is-off', !g.querySelector('.latent-trace:not(.is-off)'));
+        });
+        host.querySelectorAll('.latent-hull').forEach(h => {
+          h.classList.toggle('is-off', !cats.has(h.dataset.cat));
+        });
+        chips.forEach(b => {
+          const on = (b.dataset.kind === 'cat' ? cats : srcs).has(b.dataset.key);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        // Keep the button's slot reserved either way, so showing it never nudges
+        // the chips sideways. `visibility: hidden` also takes it out of the tab
+        // order and the accessibility tree while it is idle.
+        resetEl.classList.toggle('is-idle', cats.size === behaviors.length && srcs.size === 2);
+        clear();
+      }
+
+      function select(m, t) {
+        host.classList.add('is-hovering');
+        host.querySelectorAll('.latent-motion, .latent-hull').forEach(g => {
+          g.classList.toggle('is-active', g.dataset.m === m);
+        });
+        tip.hidden = false;
+        tip.innerHTML = `<strong>${m}</strong><span>${t.cat}${t.ood ? ' &middot; validation clip, unseen by the encoder' : ''}</span>`;
+      }
+
+      function moveTip(event) {
+        const box = host.getBoundingClientRect();
+        const x = event.clientX - box.left;
+        const y = event.clientY - box.top;
+        tip.style.left = Math.min(Math.max(x + 14, 8), box.width - tip.offsetWidth - 8) + 'px';
+        tip.style.top = Math.max(y - tip.offsetHeight - 12, 8) + 'px';
+      }
+
+      function clear() {
+        host.classList.remove('is-hovering');
+        host.querySelectorAll('.is-active').forEach(g => g.classList.remove('is-active'));
+        tip.hidden = true;
+      }
+    })();
+
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
+  </script>
+</body>
+</html>
